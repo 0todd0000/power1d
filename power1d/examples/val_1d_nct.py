@@ -103,4 +103,4 @@ pyplot.setp(AX, ylim=(0.1, 1.1))
 pyplot.show()
 
 
-# pyplot.savefig('/Users/todd/Documents/Projects/projects/power1d/figsnew/val_1d_nct.pdf')
+

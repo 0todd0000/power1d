@@ -34,5 +34,5 @@ ax.set_xlabel('Continuum position', size=12)
 ax.set_ylabel('Test statistic value', size=12)
 pyplot.show()
 
-# pyplot.savefig('/Users/todd/Documents/Projects/projects/power1d/figsnew/experiment.pdf')
+
 

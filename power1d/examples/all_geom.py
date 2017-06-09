@@ -54,5 +54,5 @@ for ax in [AX[0], AX[5], AX[10]]:
 pyplot.show()
 
 
-# pyplot.savefig('/Users/todd/Documents/Projects/projects/power1d/figsnew/all_geom.pdf')
+
 

@@ -41,5 +41,5 @@ labels   = '(a)', '(b)'
 [ax.text(0.03, 0.91, s, size=12, transform=ax.transAxes)   for ax,s in zip(AX,labels)]
 pyplot.show()
 
-# pyplot.savefig('/Users/todd/Documents/Projects/projects/power1d/figsnew/geom_operators.pdf')
+
 

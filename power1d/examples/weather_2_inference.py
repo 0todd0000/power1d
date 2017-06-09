@@ -94,5 +94,5 @@ ax.set_xlabel('Day', size=14)
 ax.set_ylabel('t value', size=14)
 pyplot.show()
 
-# pyplot.savefig('/Users/todd/Documents/Projects/projects/power1d/figsnew/weather_inference.pdf')
+
 

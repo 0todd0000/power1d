@@ -71,4 +71,4 @@ labels  = 'Inflated variance', 'Non-central RFT', 'Numerical'
 pyplot.show()
 
 
-# pyplot.savefig('/Users/todd/Documents/Projects/projects/power1d/figsnew/existing_methods.pdf')
+

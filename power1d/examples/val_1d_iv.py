@@ -117,7 +117,7 @@ pyplot.setp(AX, ylim=(0, 0.75))
 pyplot.show()
 
 
-# pyplot.savefig('/Users/todd/Documents/Projects/projects/power1d/figsnew/val_1d_iv.pdf')
+
 
 
 

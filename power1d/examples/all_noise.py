@@ -47,18 +47,6 @@ noise.append(   power1d.noise.SignalDependent(noise0, signal, fn=fn)   )
 
 
 
-# #(1) Plot:
-# pyplot.close('all')
-# pyplot.figure(figsize=(12,6))
-# # for i,x in enumerate(noise):
-# 	ax = pyplot.subplot(3, 5, i+1)
-# 	x.plot(ax, color='b', lw=0.5)
-# 	ax.text(0.05, 0.9, '%s' %x.__class__.__name__, transform=ax.transAxes, bbox=dict(facecolor='w', alpha=0.5))
-# pyplot.suptitle('All power1d.noise models', size=20)
-# pyplot.show()
-
-
-
 #(1) Plot:
 pyplot.close('all')
 pyplot.figure(figsize=(12,6))
@@ -89,6 +77,6 @@ for ax in [AX[0], AX[5], AX[7]]:
 pyplot.show()
 
 
-# pyplot.savefig('/Users/todd/Documents/Projects/projects/power1d/figsnew/all_noise.pdf')
+
 
 

@@ -84,7 +84,7 @@ ax.legend()
 pyplot.show()
 
 
-# pyplot.savefig('/Users/todd/Documents/Projects/projects/power1d/figsnew/val_0d.pdf')
+
 
 
 

@@ -39,5 +39,5 @@ pyplot.figure(figsize=(8,6))
 results.plot()
 pyplot.show()
 
-# pyplot.savefig('/Users/todd/Documents/Projects/projects/power1d/figsnew/experiment_simulator_two_sample.pdf')
+
 
