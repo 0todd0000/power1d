@@ -6,12 +6,12 @@ power estimates in experiments involving one-dimensional
 continua. PeerJ Computer Science.
 
 
-Copyright (C) 2017  Todd Pataky
-Version: 0.1 (2017/04/01)
+Copyright (C) 2020  Todd Pataky
+Version: 0.1.1 (2020/06/22)
 '''
 
 
-__version__ = '0.1 (2017/04/01)'
+__version__ = '0.1.1 (2020/06/22)'
 
 
 __all__ = ['geom', 'models', 'noise', 'roi', 'stats']

@@ -3,8 +3,8 @@ One-dimensional noise models.
 '''
 
 
-# Copyright (C) 2017  Todd Pataky
-# version: 0.1 (2017/04/01)
+# Copyright (C) 2020  Todd Pataky
+# Version: 0.1.1 (2020/06/22)
 
 
 from copy import deepcopy
@@ -299,6 +299,9 @@ class SmoothGaussian(_Noise):
 		self._random()
 	def _random(self):
 		self.value  = self.mu + self.sigma * self._gen.generate_sample()
+	def set_sample_size(self, J):
+		self._gen   = Generator1D(J, self.Q, self.fwhm, self.pad)
+		super(SmoothGaussian, self).set_sample_size(J)
 
 
 
@@ -376,6 +379,9 @@ class SmoothSkewed(_Noise):
 		m     = y.mean(axis=1)
 		self.value = ((y.T + self.alpha*x ).T) / self.alpha
 
+	def set_sample_size(self, J):
+		self._gen   = Generator1D(J, self.Q, self.fwhm, self.pad)
+		super(SmoothSkewed, self).set_sample_size(J)
 
 
 
