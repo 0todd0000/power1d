@@ -19,7 +19,7 @@ License
 
 power1d is a package for numerically estimating statistical power in experiments involving one-dimensional continua.
 
-    Copyright (C) 2017  Todd Pataky
+    Copyright (C) 2020  Todd Pataky
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
