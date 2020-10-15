@@ -7,6 +7,14 @@ Numerical Power Estimates for One-Dimensional Continua
 Software documentation:
 [www.spm1d.org/power1d](http://spm1d.org/power1d)
 
+**Please cite**:
+
+Pataky TC (2017) Power1D: A Python toolbox for numerical power estimates in experiments involving one-dimensional
+continua. PeerJ Computer Science 3: e125. DOI: 10.7717/peerj-cs.125
+
+https://peerj.com/articles/cs-125/
+
+
 
 Issues
 -------
