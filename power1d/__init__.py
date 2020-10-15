@@ -1,17 +1,19 @@
 '''
 power1d: numerical power estimates for one-dimensional continua
 
-Pataky TC (in review) Power1D: A Python toolbox for numerical
+Pataky TC (2017) Power1D: A Python toolbox for numerical
 power estimates in experiments involving one-dimensional
-continua. PeerJ Computer Science.
+continua. PeerJ Computer Science 3: e125.
+DOI: 10.7717/peerj-cs.125
+https://peerj.com/articles/cs-125/
 
 
 Copyright (C) 2020  Todd Pataky
-Version: 0.1.1 (2020/06/22)
+Version: 0.1.1 (2020/10/15)
 '''
 
 
-__version__ = '0.1.1 (2020/06/22)'
+__version__ = '0.1.2 (2020/10/15)'
 
 
 __all__ = ['geom', 'models', 'noise', 'roi', 'stats']
