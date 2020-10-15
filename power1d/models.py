@@ -57,7 +57,7 @@ class DataSample(_Noise):
 
 	*baseline* ---- a power1d.geom object representing the sample datum
 	
-	*noise* ---- a power1d.geom object representing the sample signal
+	*signal* ---- a power1d.geom object representing the sample signal
 	
 	*noise* ---- a power1d.noise object representing the sample noise
 	
