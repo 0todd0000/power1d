@@ -13,7 +13,7 @@ Version: 0.1.1 (2020/10/15)
 '''
 
 
-__version__ = '0.1.2 (2020/10/15)'
+__version__ = '0.1.3 (2020/10/22)'
 
 
 __all__ = ['geom', 'models', 'noise', 'roi', 'stats']

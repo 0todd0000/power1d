@@ -2,8 +2,8 @@
 Base classes for all **power1d** objects.
 '''
 
-# Copyright (C) 2017  Todd Pataky
-# version: 0.1 (2017/04/01)
+# Copyright (C) 2020  Todd Pataky
+
 
 
 import inspect
@@ -164,7 +164,7 @@ class _ContniuumObject(_Power1DObject):
 	def _assert_scalar(self, d):
 		for name,value in d.items():
 			s = self._error_prefix(name)
-			assert isinstance(value, (float,int)), s + 'must be a scalar (float or int).'
+			assert np.isscalar(value), s + 'must be a scalar.'
 		self._assert_not_inf_nan( d )
 	
 
