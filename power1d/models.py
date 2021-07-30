@@ -573,7 +573,7 @@ class ExperimentSimulator(object):
 		return SimulationResults( self.model0, self.model1, Z0, Z1, dt )
 
 
-	def simulate(self, iterations=50, progress_bar=True):
+	def simulate(self, iterations=50, progress_bar=True, two_tailed=False):
 		'''
 		Iteratively simulate a number of experiments.
 		
@@ -585,6 +585,8 @@ class ExperimentSimulator(object):
 		*iterations* ---- number of iterations to perform (positive int, default 1000)
 		
 		*progress_bar* ---- whether or not to display a progress bar in the terminal (bool, default True)
+
+		*two_tailed* ---- whether or not to use two-tailed inference (bool, default False)
 		
 		Outputs:
 		
@@ -639,6 +641,8 @@ class ExperimentSimulator(object):
 		### assemble results:
 		dt            = time.time() - t0
 		Z0,Z1         = np.asarray(Z0), np.asarray(Z1)
-		return SimulationResults( self.model0, self.model1, Z0, Z1, dt )
+		if two_tailed:
+			Z0,Z1     = np.abs(Z0), np.abs(Z1)
+		return SimulationResults( self.model0, self.model1, Z0, Z1, dt, two_tailed=two_tailed )
 
 

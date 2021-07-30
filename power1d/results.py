@@ -73,7 +73,7 @@ class SimulationResults(object):
 	A class containing **power1d** simulation results
 	including distributions and derived probabilities.
 	'''
-	def __init__(self, model0, model1, Z0, Z1, dt):
+	def __init__(self, model0, model1, Z0, Z1, dt, two_tailed=False):
 		### experimental models (for plotting only)
 		self.model0        = model0  #: the "null" experiment model  (an instance of **power1d.models.Experiment**)
 		self.model1        = model1  #: the "alternative" experiment model   (an instance of **power1d.models.Experiment**)
@@ -83,6 +83,7 @@ class SimulationResults(object):
 		self.Q             = Z0.shape[1] #: continuum size
 		self.Z0            = Z0      #: test statistic continua ("null" experiment)
 		self.Z1            = Z1      #: test statistic continua ("alternative" experiment)
+		self.two_tailed    = bool( two_tailed )
 		#: inference parameters:
 		self.alpha         = None    #: Type I error rate (default 0.05)
 		self.roi           = None    #: region(s) of interest (default: whole continuum)
