@@ -8,12 +8,12 @@ DOI: 10.7717/peerj-cs.125
 https://peerj.com/articles/cs-125/
 
 
-Copyright (C) 2020  Todd Pataky
-Version: 0.1.1 (2020/10/15)
+Copyright (C) 2021  Todd Pataky
+Version: 0.1.4 (2021-07-30)
 '''
 
 
-__version__ = '0.1.3 (2020/10/22)'
+__version__ = '0.1.4 (2021-07-30)'
 
 
 __all__ = ['geom', 'models', 'noise', 'roi', 'stats']
