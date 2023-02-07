@@ -1,8 +1,10 @@
 '''
 Base classes for all **power1d** objects.
+
+Copyright (C) 2023  Todd Pataky
 '''
 
-# Copyright (C) 2020  Todd Pataky
+
 
 
 

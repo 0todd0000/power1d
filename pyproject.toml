@@ -1,0 +1,57 @@
+[project]
+name            = "power1d"
+version         = "0.1.6"
+description     = "Numerical Power Estimates for One-Dimensional Continua"
+readme          = "README.md"
+requires-python = ">=3.7"
+# license         = "GPL version 3"
+# license = {file = "LICENSE.txt"}
+
+keywords        = [
+	"statistics",
+	"probability",
+	"hypothesis testing",
+	"functional data analysis",
+	"time series analysis",
+	"continuum data analysis"
+]
+
+authors         = [
+	{name = "Todd Pataky", email = "0todd0@gmail.com" } # Optional
+]
+
+classifiers = [
+	"Development Status :: 4 - Beta",
+	"License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+	"Topic :: Scientific/Engineering",
+	"Programming Language :: Python :: 3.9",
+]
+
+
+dependencies = [
+  "numpy",
+  "scipy",
+  "matplotlib",
+]
+
+
+
+
+
+[project.urls]  # Optional
+"Homepage"    = "https://www.spm1d.org/power1d"
+"Source"      = "https://github.com/0todd0000/power1d"
+"Bug Reports" = "https://github.com/0todd0000/power1d/issues"
+
+
+
+
+[tool.setuptools]
+package-data  = {"power1d.data.weather" = ["*.py", "*.npz", "*.npy", "*.m", "*.mat", "*.txt"]}
+
+
+
+
+[build-system]
+requires      = ["setuptools>=43.0.0", "wheel"]
+build-backend = "setuptools.build_meta"

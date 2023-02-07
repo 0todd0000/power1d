@@ -1,10 +1,10 @@
 '''
 One-dimensional noise models.
+
+Copyright (C) 2023  Todd Pataky
 '''
 
 
-# Copyright (C) 2020  Todd Pataky
-# Version: 0.1.1 (2020/06/22)
 
 
 from copy import deepcopy

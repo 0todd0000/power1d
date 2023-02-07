@@ -1,4 +1,0 @@
-include LICENSE.txt
-include README.md
-include setup.py
-global-include power1d/data *.py *.npz *.npy *.m *.mat *.txt
