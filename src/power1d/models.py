@@ -90,7 +90,7 @@ class DataSample(_Noise):
 		self.noise        = None     #: noise model
 		self.signal       = None     #: signal model
 		self.value0       = None     #: value in the absence of noise (baseline + signal)
-		self.hasregressor = False    #: whether or not a regressor has been associated with the data sample
+		# self.hasregressor = False    #: whether or not a regressor has been associated with the data sample
 		self.regressor    = None     #: (J,) numpy array representing regressor
 		### construct instance:
 		self.set_baseline(baseline)
@@ -102,6 +102,10 @@ class DataSample(_Noise):
 		self.random()
 
 
+	@property
+	def hasregressor(self):
+		return self.regressor is not None
+	
 	def _random(self, subtract_baseline=False):
 		self.noise.random()
 		if self.hasregressor:
@@ -240,12 +244,13 @@ class DataSample(_Noise):
 
 		*x* ---- a length-J numpy array (float)
 		'''
-		if x is None:
-			self.hasregressor = False
-			self.regressor    = None
-		else:
-			self.hasregressor = True
-			self.regressor    = x
+		# if x is None:
+		# 	self.hasregressor = False
+		# 	self.regressor    = None
+		# else:
+		# 	self.hasregressor = True
+		# 	self.regressor    = x
+		self.regressor  = x
 			
 	
 	def set_sample_size(self, J):
@@ -332,25 +337,29 @@ class Experiment(object):
 			assert (m.Q == Q), 'all data_sample_models must have the same continuum size.  model[0]: Q=%d, model[%d]: Q=%d' %(Q, i, m.Q)
 		### check test statistic function:
 		assert callable(fn), 'fn must be a callable function'
-		### check for errors:
-		values  = [m.value for m in dmodels]
-		try:
-			fn( *values )
-		except:
-			raise( ValueError('"fn" exited with errors.  It must accept data_model.value as its input argument and return an array with length Q')  )
-		### check function output size:
-		y   = fn( *values )
-		assert isinstance(y, np.ndarray), '"fn" must return a NumPy array.'
-		assert y.ndim==1, '"fn" must return a one-dimensional NumPy array.'
-		assert y.size==Q, '"fn" must return a NumPy array of length Q.'
+		# ### check for errors:
+		# values  = [m.value for m in dmodels]
+		# try:
+		# 	fn( *values )
+		# except:
+		# 	raise( ValueError('"fn" exited with errors.  It must accept data_model.value as its input argument and return an array with length Q')  )
+		# ### check function output size:
+		# y   = fn( *values )
+		# assert isinstance(y, np.ndarray), '"fn" must return a NumPy array.'
+		# assert y.ndim==1, '"fn" must return a one-dimensional NumPy array.'
+		# assert y.size==Q, '"fn" must return a NumPy array of length Q.'
 		### set attributes:
-		self.Q           = Q              #:continuum length
+		self._args       = None           #: extra arguments for self.fn
+		self.Q           = Q              #: continuum length
 		self.data_models = dmodels        #: data models
 		self.nmodels     = len(dmodels)   #: number of data models
 		self.fn          = fn             #: test statistic function
 		self.Z           = None           #: output test statistic continua
 		### copy models (to ensure that each data model has different noise):
 		self.data_models = [m.copy() for m in self.data_models]
+		
+		if self.data_models[0].hasregressor:
+			self._args   = [self.data_models[0].regressor,]
 
 
 	def __eq__(self, other):
@@ -423,6 +432,8 @@ class Experiment(object):
 		for m in self.data_models:
 			m.random(subtract_baseline=True)
 		values       = [m.value for m in self.data_models]
+		if self._args is not None:
+			values  += list( self._args )
 		return self.fn( *values )
 
 

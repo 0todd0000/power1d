@@ -252,6 +252,7 @@ def t_regress_fn(x):
 	Xi     = np.linalg.pinv(X)
 	cXXc   = float(   c.T * (np.linalg.inv(X.T*X)) * c   )
 	df     = J - 2                    #degrees of freedom
+	# global fn
 	def fn(y):
 		Y      = np.matrix(y)
 		b      = Xi*Y                 #regression parameters
