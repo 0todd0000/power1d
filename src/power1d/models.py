@@ -353,6 +353,23 @@ class Experiment(object):
 		self.data_models = [m.copy() for m in self.data_models]
 
 
+	def __eq__(self, other):
+		try:
+			self.assert_equal( other )
+			return True
+		except AssertionError:
+			return False
+	
+	
+	def assert_equal(self, other, tol=1e-6):
+		import pytest
+		assert isinstance(other, Experiment)
+		assert self.Q == other.Q
+		for dmodel,dmodel0 in zip(self.data_models, other.data_models):
+			assert dmodel == dmodel0
+		# assert self.Z0  == pytest.approx(other.value,  abs=tol)
+	
+	
 	def plot(self, ax=None, with_noise=True, colors=None, q=None):
 		'''
 		Plot an instantaneous representation of the Experiment model.

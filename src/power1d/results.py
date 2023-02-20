@@ -112,6 +112,14 @@ class SimulationResults(object):
 		self._init()
 
 
+	def __eq__(self, other):
+		try:
+			self.assert_equal( other )
+			return True
+		except AssertionError:
+			return False
+	
+	
 	def __repr__(self):
 		s  = ''
 		s += '------------------------\n'
@@ -236,7 +244,39 @@ class SimulationResults(object):
 		self._calculate_prob_coi()
 
 
+	def assert_equal(self, other, tol=1e-6):
+		import pytest
+		assert isinstance(other, SimulationResults)
+		assert self.model0 == other.model0
+		assert self.Z0  == pytest.approx(other.Z0,  abs=tol)
+		assert self.Z1  == pytest.approx(other.Z1,  abs=tol)
+		assert self.z0  == pytest.approx(other.z0,  abs=tol)
+		assert self.z1  == pytest.approx(other.z1,  abs=tol)
+		assert self.p1d_poi0 == pytest.approx(other.p1d_poi0,  abs=tol)
+		assert self.p1d_poi1 == pytest.approx(other.p1d_poi1,  abs=tol)
+		assert self.p1d_coi0 == pytest.approx(other.p1d_coi0,  abs=tol)
+		assert self.p1d_coi1 == pytest.approx(other.p1d_coi1,  abs=tol)
+		
+	
+	
+	def dump(self, fpath):
+		import pickle
+		with open(fpath, 'wb') as f:
+			pickle.dump(self, f)
 
+	# def dump(self, fpath, precision=3):
+	# 	from copy import deepcopy
+	# 	import pickle
+	# 	results = deepcopy( self )
+	# 	print( 'with around')
+	# 	results.Z0 = np.around(results.Z0, precision)
+	# 	results.Z1 = np.around(results.Z1, precision)
+	# 	results.z0 = np.around(results.z0, precision)
+	# 	results.z1 = np.around(results.z1, precision)
+	# 	with open(fpath, 'wb') as f:
+	# 		pickle.dump(results, f)
+	
+	
 	def plot(self, q=None):
 		'''
 		Plot simulation results.
