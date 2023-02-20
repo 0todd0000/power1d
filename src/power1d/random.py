@@ -20,8 +20,8 @@ Pataky TC (2016) RFT1D: Smooth One-Dimensional Random Field Upcrossing Probabili
 **Journal of Statistical Software** 71(7), 1-22. http://doi.org/10.18637/jss.v071.i07
 '''
 
-# Copyright (C) 2017  Todd Pataky
-# version: 0.1 (2017/04/01)
+# Copyright (C) 2023  Todd Pataky
+
 
 
 from math import sqrt,log

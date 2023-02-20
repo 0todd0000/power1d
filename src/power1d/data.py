@@ -6,8 +6,8 @@ Currently only one dataset is available:
 "weather"
 '''
 
-# Copyright (C) 2017  Todd Pataky
-# version: 0.1 (2017/04/01)
+# Copyright (C) 2023  Todd Pataky
+
 
 import os
 import numpy as np

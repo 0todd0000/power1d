@@ -8,8 +8,8 @@ More complex 1D geometries can be constructed by combining multiple
 primitives through the standard operators: + - * / **
 '''
 
-# Copyright (C) 2017  Todd Pataky
-# version: 0.1 (2017/04/01)
+# Copyright (C) 2023  Todd Pataky
+
 
 from copy import deepcopy
 from math import sqrt,pi,log,floor

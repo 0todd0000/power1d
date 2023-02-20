@@ -54,8 +54,8 @@ the ROI contains no signal. Simulating for a larger number of iterations \
 will yield more precise convergence to alpha.
 '''
 
-# Copyright (C) 2017  Todd Pataky
-# version: 0.1 (2017/04/01)
+# Copyright (C) 2023  Todd Pataky
+
 
 import numpy as np
 from scipy.ndimage import label as scipy_label

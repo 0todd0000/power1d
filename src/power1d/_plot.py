@@ -15,8 +15,7 @@ to be modified. Simply substitute function and method content with appropriate
 commands from another library.
 '''
 
-# Copyright (C) 2017  Todd Pataky
-# version: 0.1 (2017/04/01)
+# Copyright (C) 2023  Todd Pataky
 
 
 

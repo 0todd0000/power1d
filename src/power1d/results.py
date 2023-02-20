@@ -41,9 +41,8 @@ Example:
 	results.plot()
 '''
 
+# Copyright (C) 2023  Todd Pataky
 
-# Copyright (C) 2017  Todd Pataky
-# version: 0.1 (2017/04/01)
 
 
 import numpy as np

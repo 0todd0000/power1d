@@ -2,10 +2,8 @@
 High-level classes for assembling data models and simulating experiments.
 '''
 
+# Copyright (C) 2023  Todd Pataky
 
-
-# Copyright (C) 2017  Todd Pataky
-# version: 0.1 (2017/04/01)
 
 
 from copy import deepcopy
