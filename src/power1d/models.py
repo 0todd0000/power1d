@@ -87,8 +87,7 @@ class DataSample(_Noise):
 		self.baseline     = None     #: baseline model
 		self.noise        = None     #: noise model
 		self.signal       = None     #: signal model
-		self.value0       = None     #: value in the absence of noise (baseline + signal)
-		# self.hasregressor = False    #: whether or not a regressor has been associated with the data sample
+		# self.value0       = None     #: value in the absence of noise (baseline + signal)
 		self.regressor    = None     #: (J,) numpy array representing regressor
 		### construct instance:
 		self.set_baseline(baseline)
@@ -103,6 +102,16 @@ class DataSample(_Noise):
 	@property
 	def hasregressor(self):
 		return self.regressor is not None
+		
+	@property
+	def value0(self):  # value in the absence of noise (baseline + signal)
+		if self.baseline is None:
+			return None
+		elif self.signal is None:
+			return self.baseline.value
+		else:
+			return self.baseline.value + self.signal.value
+		
 	
 	def _random(self, subtract_baseline=False):
 		self.noise.random()
@@ -219,7 +228,7 @@ class DataSample(_Noise):
 			assert baseline.Q == self.noise.Q, 'Baseline and noise must be the same length (baseline: Q=%d, noise: Q=%d).' %(baseline.Q, noise.Q)
 		self.baseline = baseline
 		self.Q        = baseline.Q
-		self.value0   = baseline.value
+		# self.value0   = baseline.value
 		
 	def set_noise(self, noise):
 		'''
@@ -278,7 +287,7 @@ class DataSample(_Noise):
 		self._assert_instance( dict(signal=signal), [_Continuum1D])
 		assert signal.Q == self.baseline.Q, 'Baseline and signal must be the same length (baseline: Q=%d, signal: Q=%d).' %(self.baseline.Q, signal.Q)
 		self.signal   = signal
-		self.value0   = self.baseline.value + self.signal.value
+		# self.value0   = self.baseline.value + self.signal.value
 		# if self.hasregressor:
 		# 	svalue       = [x * self.signal.value  for x in self.regressor]
 		# 	self.value0r = np.array( svalue )
