@@ -68,7 +68,7 @@ class DataSample(_Noise):
 	.. plot::
 		:include-source:
 
-		from matplotlib import pyplot
+		import matplotlib.pyplot as plt
 		import power1d
 
 		J        = 20
@@ -77,7 +77,7 @@ class DataSample(_Noise):
 		signal   = power1d.geom.GaussianPulse( Q=Q, q=40, fwhm=15, amp=3.5 )
 		noise    = power1d.noise.SmoothGaussian( J=J, Q=Q, mu=0, sigma=1.0, fwhm=20 )
 		model    = power1d.models.DataSample(baseline, signal, noise, J=J)
-		pyplot.close('all')
+		plt.close('all')
 		model.plot(color="g", lw=5)
 	'''
 	def __init__(self, baseline, signal, noise, J=8, regressor=None):
@@ -169,7 +169,7 @@ class DataSample(_Noise):
 		.. plot::
 			:include-source:
 
-			from matplotlib import pyplot
+			import matplotlib.pyplot as plt
 			import power1d
 
 			J        = 8
@@ -178,7 +178,7 @@ class DataSample(_Noise):
 			signal   = power1d.geom.GaussianPulse( Q=Q, q=75, fwhm=15, amp=5.0 )
 			noise    = power1d.noise.Gaussian( J=J, Q=Q, mu=0, sigma=1.0 )
 			model    = power1d.models.DataSample(baseline, signal, noise, J=J)
-			pyplot.close('all')
+			plt.close('all')
 			model.plot(color="b", lw=5)
 		'''
 		plotter = DataPlotter(ax)
@@ -307,7 +307,7 @@ class Experiment(object):
 	.. plot::
 		:include-source:
 
-		from matplotlib import pyplot
+		import matplotlib.pyplot as plt
 		import power1d
 
 		J        = 10
@@ -319,7 +319,7 @@ class Experiment(object):
 		model0   = power1d.models.DataSample(baseline, signal0, noise, J=J)
 		model1   = power1d.models.DataSample(baseline, signal1, noise, J=J)
 		emodel   = power1d.models.Experiment( [model0, model1], fn=power1d.stats.t_2sample )
-		pyplot.close('all')
+		plt.close('all')
 		emodel.plot()
 	'''
 	def __init__(self, data_sample_models, fn):
@@ -394,7 +394,7 @@ class Experiment(object):
 			:include-source:
 
 			import numpy as np
-			from matplotlib import pyplot
+			import matplotlib.pyplot as plt
 			import power1d
 
 			J        = 8
@@ -406,7 +406,7 @@ class Experiment(object):
 			model0   = power1d.models.DataSample(baseline, signal0, noise, J=J)
 			model1   = power1d.models.DataSample(baseline, signal1, noise, J=J)
 			emodel   = power1d.models.Experiment( [model0, model1], fn=power1d.stats.t_2sample )
-			pyplot.close('all')
+			plt.close('all')
 			emodel.plot( colors=("k", "r"), q=np.linspace(0, 1, Q) )
 		'''
 		if colors is None:
@@ -449,7 +449,7 @@ class Experiment(object):
 			:include-source:
 
 			import numpy as np
-			from matplotlib import pyplot
+			import matplotlib.pyplot as plt
 			import power1d
 
 			J        = 8
@@ -463,9 +463,9 @@ class Experiment(object):
 			emodel   = power1d.models.Experiment( [model0, model1], fn=power1d.stats.t_2sample )
 			
 			emodel.simulate(iterations=50, progress_bar=True)
-			pyplot.close('all')
-			pyplot.plot( emodel.Z.T, color='k', lw=0.5 )
-			pyplot.title('Test statistic continua')
+			plt.close('all')
+			plt.plot( emodel.Z.T, color='k', lw=0.5 )
+			plt.title('Test statistic continua')
 		'''
 		_msg             = 'iterations must be an integer between 10 and 100,000'
 		assert isinstance(iterations, int), _msg
@@ -559,7 +559,7 @@ class ExperimentSimulator(object):
 			:include-source:
 
 			import numpy as np
-			from matplotlib import pyplot
+			import matplotlib.pyplot as plt
 			import power1d
 
 			J        = 8
@@ -585,7 +585,7 @@ class ExperimentSimulator(object):
 			#Then the results can be re-loaded:
 			fname         = "/tmp/results.npz"
 			saved_results = sim.load_simulation_results( fname )
-			pyplot.close('all')
+			plt.close('all')
 			saved_results.plot()
 		'''
 		with np.load(filename) as D:
@@ -677,7 +677,7 @@ class ExperimentSimulator(object):
 			:include-source:
 
 			import numpy as np
-			from matplotlib import pyplot
+			import matplotlib.pyplot as plt
 			import power1d
 
 			J        = 8
@@ -695,7 +695,7 @@ class ExperimentSimulator(object):
 			sim      = power1d.models.ExperimentSimulator(emodel0, emodel1)
 			results  = sim.simulate(iterations=200, progress_bar=True)
 			
-			pyplot.close('all')
+			plt.close('all')
 			results.plot()
 		'''
 		_msg          = 'iterations must be an integer greater than or equal to 50'

@@ -9,7 +9,7 @@ Example:
 	:include-source:
 
 	import numpy as np
-	from matplotlib import pyplot
+	import matplotlib.pyplot as plt
 	import power1d
 
 	
@@ -43,7 +43,7 @@ Example:
 
 
 	# plot:
-	pyplot.close('all')
+	plt.close('all')
 	results.plot()
 
 
@@ -75,7 +75,7 @@ class RegionOfInterest(_Continuum1D):
 		:include-source:
 	
 		import numpy as np
-		from matplotlib import pyplot
+		import matplotlib.pyplot as plt
 		import power1d
 		
 		Q        = 101
@@ -83,7 +83,7 @@ class RegionOfInterest(_Continuum1D):
 		x[40:60] = True
 		roi      = power1d.roi.RegionOfInterest(x)
 
-		pyplot.close('all')
+		plt.close('all')
 		roi.plot()
 	'''
 	

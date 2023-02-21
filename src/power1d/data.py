@@ -47,12 +47,12 @@ def weather():
 	.. plot::
 		:include-source:
 
-		from matplotlib import pyplot
+		import matplotlib.pyplot as plt
 		import power1d
 
 		data = power1d.data.weather()   #load data dictionary
 		y    = data['Continental']   #extract one region
-		pyplot.plot(y.T, color="k")
+		plt.plot(y.T, color="k")
 	'''
 	dir0     = os.path.dirname(__file__)
 	fname    = os.path.join(dir0, 'data', 'weather', 'daily.npz')

@@ -19,7 +19,7 @@ Example:
 	:include-source:
 
 	import numpy as np
-	from matplotlib import pyplot
+	import matplotlib.pyplot as plt
 	import power1d
 
 	J        = 8
@@ -37,7 +37,7 @@ Example:
 	sim      = power1d.models.ExperimentSimulator(emodel0, emodel1)
 	results  = sim.simulate(iterations=200, progress_bar=True)
 	
-	pyplot.close('all')
+	plt.close('all')
 	results.plot()
 '''
 
