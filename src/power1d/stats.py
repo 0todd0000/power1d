@@ -181,6 +181,7 @@ def t_2sample_fn(JA, JB):
 # Linear regression t statistic
 #------------------------------------
 
+
 def t_regress(y, x):
 	'''
 	t statistic for linear regression
@@ -205,20 +206,19 @@ def t_regress(y, x):
 	>>> x     = np.random.randn( J )
 	>>> t     = power1d.stats.t_regress( y, x )
 	'''
-	X      = np.ones((y.shape[0],2))
+	J      = y.shape[0]
+	X      = np.ones(  (J,2) )
 	X[:,0] = x
-	### assemble data:
-	Y      = np.matrix(y)
-	X      = np.matrix(X)
-	c      = np.matrix([1,0]).T
-	b      = np.linalg.pinv(X)*Y            #regression parameters
-	eij    = Y - X*b                        #residuals
-	R      = eij.T * eij                    #residual sum of squares
-	df     = Y.shape[0] - 2                 #degrees of freedom
-	s2     = np.diag(R) / df                #variance
-	### compute t statistic
-	t      = np.array(c.T*b).flatten()  /   np.sqrt(s2*float(c.T*(np.linalg.inv(X.T*X))*c))
+	c      = np.array( [1,0] )
+	b      = np.linalg.pinv(X) @ y   # regression parameters
+	eij    = y - X @ b               # residuals
+	R      = eij.T @ eij             # residual sum of squares
+	df     = J - 2                   # degrees of freedom
+	s2     = np.diag(R) / df         # variance
+	t      = np.array(c.T @ b)  /   np.sqrt(  s2 * (c.T @ (np.linalg.inv(X.T @ X) )@c)  )
 	return t
+
+
 
 def t_regress_fn(x):
 	'''
@@ -244,41 +244,39 @@ def t_regress_fn(x):
 	>>> t     = fn( y )
 	'''
 	J      = x.size
-	X      = np.ones((J,2))
+	X      = np.ones( (J,2) )
 	X[:,0] = x
-	X      = np.matrix(X)
-	c      = np.matrix([1,0]).T
+	c      = np.array( [1,0] )
 	Xi     = np.linalg.pinv(X)
-	cXXc   = float(   c.T * (np.linalg.inv(X.T*X)) * c   )
-	df     = J - 2                    #degrees of freedom
-	# global fn
+	cXXc   = c.T @ (  np.linalg.inv(X.T @ X)  ) @ c
+	df     = J - 2                    # degrees of freedom
 	def fn(y):
-		Y      = np.matrix(y)
-		b      = Xi*Y                 #regression parameters
-		eij    = Y - X*b              #residuals
-		R      = eij.T * eij          #residual sum of squares
-		s2     = np.diag(R) / df      #variance
-		t      = np.array(c.T*b).flatten()  /   np.sqrt(s2*cXXc)
+		b      = Xi @ y               # regression parameters
+		eij    = y - X@b              # residuals
+		R      = eij.T @ eij          # residual sum of squares
+		s2     = np.diag(R) / df      # variance
+		t      = (c.T @ b)  /   np.sqrt( s2 * cXXc )
 		return t
 	return fn
-
-
+	
+	
 
 #------------------------------------
 # One-way ANOVA F statistic
 #------------------------------------
 
-def _anova1_design_matrices(nResponses, nGroups):
+def _anova1_design_matrices(nResponses):
 	nTotal    = sum(nResponses)
-	X         = np.zeros((nTotal,nGroups))
+	nGroups   = len(nResponses)
+	X         = np.zeros( (nTotal,nGroups) )
 	i0        = 0
 	for i,n in enumerate(nResponses):
 		X[i0:i0+n,i] = 1
 		i0   += n
-	X         = np.matrix(X)                  #original design matrix
-	X0        = np.matrix(np.ones(nTotal)).T  #reduced design matrix
+	X0        = np.ones((nTotal,1))  # reduced design matrix
 	Xi,X0i    = np.linalg.pinv(X), np.linalg.pinv(X0)  #pseudo-inverses
 	return X,X0,Xi,X0i
+
 
 def f_anova1(*yy):
 	'''
@@ -303,24 +301,24 @@ def f_anova1(*yy):
 	>>> yC    = np.random.randn( 12, Q )
 	>>> f     = power1d.stats.f_anova1( yA, yB, yC )
 	'''
-	y           = np.vstack(yy)
 	nGroups     = len(yy)
-	nResponses  = [x.shape[0]  for x in yy]
-	nTotal      = y.shape[0]
-	df          = nGroups-1, nTotal-nGroups
-	X,X0,Xi,X0i = _anova1_design_matrices(nResponses, nGroups)
-	Y           = np.matrix(y)
-	### estimate parameters:
-	b           = Xi*Y
-	eij         = Y - X*b
-	R           = eij.T*eij
-	### reduced design:
-	b0          = X0i*Y
-	eij0        = Y - X0*b0
-	R0          = eij0.T*eij0
-	### compute F statistic:
-	F           = ((np.diag(R0)-np.diag(R))/df[0]) / (np.diag(R+eps)/df[1])
-	return F
+	nResponses  = [a.shape[0]  for a in yy]
+	nTotal      = sum( nResponses )
+	v0,v1       = nGroups-1, nTotal-nGroups  # degrees of freedom
+	X,X0,Xi,X0i = _anova1_design_matrices( nResponses )
+	# estimate parameters:
+	y           = np.vstack(yy)
+	b           = Xi @ y
+	eij         = y - X @ b
+	R           = eij.T @ eij
+	# reduced design:
+	b0          = X0i @ y
+	eij0        = y - X0 @ b0
+	R0          = eij0.T @ eij0
+	# F statistic:
+	f           = ( (np.diag(R0)-np.diag(R)) / v0)   /   ( np.diag(R+eps) / v1 )
+	return f
+
 
 def f_anova1_fn(*JJ):
 	'''
@@ -350,22 +348,21 @@ def f_anova1_fn(*JJ):
 	>>> f     = fn( yA, yB, yC )
 	'''
 	nGroups     = len(JJ)
-	nResponses  = JJ
 	nTotal      = sum(JJ)
-	df          = nGroups-1, nTotal-nGroups
-	X,X0,Xi,X0i = _anova1_design_matrices(nResponses, nGroups)
+	v0,v1       = nGroups-1, nTotal-nGroups  # degrees of freedom
+	X,X0,Xi,X0i = _anova1_design_matrices( JJ )
 	def fn(*yy):
 		y       = np.vstack(yy)
-		Y       = np.matrix(y)
-		### estimate parameters:
-		b       = Xi*Y
-		eij     = Y - X*b
-		R       = eij.T*eij
-		### reduced design:
-		b0      = X0i*Y
-		eij0    = Y - X0*b0
-		R0      = eij0.T*eij0
-		### compute F statistic:
-		F       = ((np.diag(R0)-np.diag(R))/df[0]) / (np.diag(R+eps)/df[1])
-		return F
+		# estimate parameters:
+		y       = np.vstack(yy)
+		b       = Xi @ y
+		eij     = y - X @ b
+		R           = eij.T @ eij
+		# reduced design:
+		b0      = X0i @ y
+		eij0    = y - X0 @ b0
+		R0      = eij0.T @ eij0
+		# F statistic:
+		f       = ( (np.diag(R0)-np.diag(R)) / v0)   /   ( np.diag(R+eps) / v1 )
+		return f
 	return fn
