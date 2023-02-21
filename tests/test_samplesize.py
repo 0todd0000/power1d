@@ -54,4 +54,34 @@ def test_manual():
 	assert power_coi  == pytest.approx( pc, abs=1e-5 )
 
 
-test_manual()
+def test_sample_size():
+	# create geometry and noise models:
+	J          = 5    # sample size
+	Q          = 101  # continuum size
+	q          = 65   # signal location
+	baseline   = power1d.geom.Null(Q=Q)
+	signal0    = power1d.geom.Null(Q=Q)
+	signal1    = power1d.geom.GaussianPulse(Q=101, q=q, amp=1.3, sigma=10)
+	noise      = power1d.noise.Gaussian(J=5, Q=101, sigma=1)
+	# create data sample models:
+	model0     = power1d.models.DataSample(baseline, signal0, noise, J=J)  #null
+	model1     = power1d.models.DataSample(baseline, signal1, noise, J=J)  #alternative
+	# create experiment simulator:
+	np.random.seed(0)    #seed the random number generator
+	tstat      = power1d.stats.t_1sample  #test statistic function
+	emodel0    = power1d.models.Experiment(model0, tstat) # null
+	emodel1    = power1d.models.Experiment(model1, tstat) # alternative
+	sim        = power1d.ExperimentSimulator(emodel0, emodel1)
+	# estimate sample size:
+	results    = sim.sample_size(power=0.8, alpha=0.05, niter0=200, niter=2000, coi=dict(q=q, r=3))
+	# load expected results:
+	fpathNPZ  = os.path.join( dir_expected, 'sample_size.npz' )
+	with np.load( fpathNPZ ) as z:
+		results0 = dict( z )
+	assert results['nstar'] == pytest.approx( results0['nstar'], abs=1e-5 )
+	assert results['n'] == pytest.approx( results0['n'], abs=1e-5 )
+	assert results['p'] == pytest.approx( results0['p'], abs=1e-5 )
+
+
+# test_manual()
+test_sample_size()

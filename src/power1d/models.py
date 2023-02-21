@@ -593,6 +593,64 @@ class ExperimentSimulator(object):
 		return SimulationResults( self.model0, self.model1, Z0, Z1, dt )
 
 
+	def sample_size(self, power=0.8, alpha=0.05, niter0=200, niter=1000, coi=None):
+		'''
+		Estimate sample size required to achieve a target power.
+		
+		When *coi* is None the omnibus power is used.
+		When *coi* is a dictionary then the COI power is used, e.g. coi=dict(q=65, r=3)
+
+		Arguments:
+		
+		*power* ---- target power (default: 0.8, range: [0,1])
+		
+		*alpha* ---- Type I error rate (default: 0.05, range: [0,1])
+		
+		*niter0* ---- Number of iterations for initial, approximate solution (default: 200, range: [200,])
+		
+		*niter* ---- Number of iterations for final solution (default: 1000, range: [1000,])
+		
+		*coi* ---- Center-of-interest (default: None;  either None or dict(q=q, r=r)  where q is the COI and r is its radius; e.g. coi=dict(q=65, r=3))
+		
+		Outputs:
+		
+		Dictionary containing:
+		
+		*nstar* ---- estimated sample size required to achieve the target power
+		
+		*n* --- array of sample sizes used for the final power calculation
+		
+		*p* --- array of final power values
+		'''
+		def sim_single(n, niter=200):
+			self.model0.set_sample_size( n )
+			self.model1.set_sample_size( n )
+			results = self.simulate( niter, progress_bar=False )
+			results.set_alpha( alpha )
+			if coi is None:
+				p   = results.p_reject1
+			else:
+				results.set_coi( (coi['q'], coi['r']) )
+				p   = results.p_coi1[0]
+			return p
+		# approximate solution:
+		n,p         = 3, 0
+		data_approx = []
+		while True:
+			p       = sim_single(n, niter=niter0)
+			data_approx.append( (n,  p) )
+			if p > power:
+				break
+			else:
+				n  += 1
+		# finer detail in area of approximate solution:
+		ns    = list( range( n-3, n+3 ) )
+		ps    = np.array(  [sim_single( nn, niter=niter )  for nn in ns]  )
+		ind   = np.argwhere( ps > power ).ravel()[0]
+		nstar = ns[ind]
+		return dict(nstar=nstar, n=np.array(ns), p=ps, target_power=power, alpha=alpha, coi=coi)
+	
+	
 	def simulate(self, iterations=50, progress_bar=True, two_tailed=False):
 		'''
 		Iteratively simulate a number of experiments.
