@@ -16,7 +16,7 @@ def power_2sample(nA, nB, effect, alpha=0.05):
 
 
 
-def sample_size_2sample(effect, alpha=0.05, target_power=0.8, n_range=(3,50)):
+def sample_size_2sample(effect, alpha=0.05, target_power=0.8, n_range=(5,50)):
 	'''
 	Adjust n_range to a broader sample size range if necessary
 	'''
