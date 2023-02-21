@@ -41,9 +41,10 @@ def test_one_sample():
 	# simulate the experiments:
 	sim      = power1d.ExperimentSimulator( emodel0 , emodel1 )
 	results  = sim.simulate( 200, progress_bar=True )
+	summ     = results.as_summary()
 	# check results:
-	results0 = power1d.io.load( os.path.join(dir_expected, 'onesample-results.pkl') )
-	assert results == results0
+	summ0    = power1d.io.load( os.path.join(dir_expected, 'onesample-summ.pkl') )
+	assert summ == summ0
 	
 
 def test_two_sample():
@@ -53,26 +54,23 @@ def test_two_sample():
 	signal0   = power1d.geom.Null(Q=Q)
 	signal1   = power1d.geom.GaussianPulse(Q=101, q=65, amp=2.5, sigma=10)
 	noise     = power1d.noise.Gaussian(J=5, Q=101, sigma=1)
-
-	#(1) Create data sample models:
+	# create data sample models:
 	modelA0   = power1d.models.DataSample(baseline, signal0, noise, J=JA) #null A
 	modelB0   = power1d.models.DataSample(baseline, signal0, noise, J=JB) #null N
 	modelA1   = power1d.models.DataSample(baseline, signal0, noise, J=JA) #alternative A
 	modelB1   = power1d.models.DataSample(baseline, signal1, noise, J=JB) #alternative B
-
-	#(2) Create experiment models:
-	# teststat  = power1d.stats.t_2sample_fn(JA, JB)
-	teststat  = power1d.stats.t_2sample
+	# create experiment models:
+	teststat  = power1d.stats.t_2sample_fn(JA, JB)
+	# teststat  = power1d.stats.t_2sample
 	expmodel0 = power1d.models.Experiment([modelA0, modelB0], teststat) #null
 	expmodel1 = power1d.models.Experiment([modelA1, modelB1], teststat) #alternative
-
-	#(3) Simulate experiments:
-
+	# simulate experiments:
 	sim       = power1d.ExperimentSimulator(expmodel0, expmodel1)
 	results   = sim.simulate(1000, progress_bar=True)
+	summ     = results.as_summary()
 	# check results:
-	results0 = power1d.io.load( os.path.join(dir_expected, 'twosample-results.pkl') )
-	assert results == results0
+	summ0    = power1d.io.load( os.path.join(dir_expected, 'twosample-summ.pkl') )
+	assert summ == summ0
 	
 	
 
@@ -84,25 +82,53 @@ def test_regress():
 	signal0   = power1d.geom.Null(Q=Q)
 	signal1   = power1d.geom.GaussianPulse(Q=101, q=65, amp=2.0, sigma=10)
 	noise     = power1d.noise.Gaussian(J=5, Q=101, sigma=1)
-
-	#(1) Create data sample models:
+	# create data sample models:
 	model0    = power1d.models.DataSample(baseline, signal0, noise, J=J, regressor=x)
 	model1    = power1d.models.DataSample(baseline, signal1, noise, J=J, regressor=x)
-
-	#(2) Create experiment models:
-	# teststat  = power1d.stats.t_regress_fn(x)
-	teststat  = power1d.stats.t_regress
+	# create experiment models:
+	teststat  = power1d.stats.t_regress_fn(x)
+	# teststat  = power1d.stats.t_regress
 	expmodel0 = power1d.models.Experiment(model0, teststat)
 	expmodel1 = power1d.models.Experiment(model1, teststat)
-
-	#(3) Simulate experiments:
-
+	# simulate experiments:
 	sim       = power1d.ExperimentSimulator(expmodel0, expmodel1)
 	results   = sim.simulate(100, progress_bar=True)
+	summ     = results.as_summary()
 	# check results:
-	results0 = power1d.io.load( os.path.join(dir_expected, 'regress-results.pkl') )
-	assert results == results0
+	summ0    = power1d.io.load( os.path.join(dir_expected, 'regress-summ.pkl') )
+	assert summ == summ0
+
+
+
+def test_anova1():
+	np.random.seed(0)
+	JA,JB,JC,Q = 5, 7, 12, 101
+	baseline   = power1d.geom.Null(Q=Q)
+	signal0    = power1d.geom.Null(Q=Q)
+	signal1    = power1d.geom.GaussianPulse(Q=101, q=65, amp=1.5, sigma=10)
+	noise      = power1d.noise.Gaussian(J=5, Q=101, sigma=1)
+	# create data sample models:
+	modelA0   = power1d.models.DataSample(baseline, signal0, noise, J=JA)  #null A
+	modelB0   = power1d.models.DataSample(baseline, signal0, noise, J=JB)  #null B
+	modelC0   = power1d.models.DataSample(baseline, signal0, noise, J=JC)  #null C
+	modelA1   = power1d.models.DataSample(baseline, signal0, noise, J=JA)  #alternative A
+	modelB1   = power1d.models.DataSample(baseline, signal0, noise, J=JB)  #alternative B
+	modelC1   = power1d.models.DataSample(baseline, signal1, noise, J=JC)  #alternative C
+	# create experiment models:
+	teststat  = power1d.stats.f_anova1_fn(JA, JB, JC)
+	expmodel0 = power1d.models.Experiment([modelA0, modelB0, modelC0], teststat)
+	expmodel1 = power1d.models.Experiment([modelA1, modelB1, modelC1], teststat)
+	# simulate experiments:
+	sim       = power1d.ExperimentSimulator(expmodel0, expmodel1)
+	results   = sim.simulate(500, progress_bar=True)
+	summ     = results.as_summary()
+	# check results:
+	summ0    = power1d.io.load( os.path.join(dir_expected, 'anova1-summ.pkl') )
+	assert summ == summ0
+
+
 
 # test_one_sample()
 # test_two_sample()
 # test_regress()
+# test_anova1()

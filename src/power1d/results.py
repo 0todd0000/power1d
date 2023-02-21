@@ -66,6 +66,99 @@ def _pkmax(Z, u, k):
 	return p
 
 
+class SimulationResultsSummary(object):
+	'''
+	A class containing a reduced set of simulation results.
+	Designed primarily for unit testing.
+	
+	Create using SimulationResults.as_summary()
+	'''
+	def __init__(self, results):
+		self.alpha         = results.alpha
+		self.dt            = results.dt
+		### primary and secondary distributions:
+		self.z0            = results.z0
+		self.z1            = results.z1
+		### user-selected inference parameters:
+		self.coi           = results.coi
+		self.coir          = results.coir
+		self.poi           = results.poi
+		self.k             = results.k
+		### probability results:
+		self.zstar         = results.zstar
+		self.p_reject0     = results.p_reject0
+		self.p_reject1     = results.p_reject1
+		self.p1d_poi0      = results.p1d_poi0
+		self.p1d_poi1      = results.p1d_poi1
+		self.p1d_coi0      = results.p1d_coi0
+		self.p1d_coi1      = results.p1d_coi1
+		### probability results (at user-specified POIs and COIs)
+		self.p_poi0        = results.p_poi0
+		self.p_poi1        = results.p_poi1
+		self.p_coi0        = results.p_coi0
+		self.p_coi1        = results.p_coi1
+	
+	def __eq__(self, other):
+		try:
+			self.assert_equal( other )
+			return True
+		except AssertionError:
+			return False
+	
+	def __repr__(self):
+		s  = ''
+		s += '------------------------\n'
+		s += 'power1d simulation results SUMMARY\n'
+		s += '------------------------\n'
+		s += 'Simulation overview\n'
+		s += '   number of iterations = %d\n'  %self.niters
+		s += '   duration             = %.2f s\n'  %self.dt
+		s += '------------------------\n'
+		s += 'Main parameters\n'
+		s += '   alpha              = %0.5f\n' %self.alpha
+		s += '   critical test stat = %.5f\n'  %self.zstar
+		s += '------------------------\n'
+		s += 'H0 rejection probabilities (omnibus)\n'
+		s += '   Null model:    p = %.5f\n' %self.p_reject0
+		s += '   Effect model:  p = %.5f\n' %self.p_reject1
+		s += '------------------------\n'
+		if self.coi is not None:
+			s += 'H0 rejection probability (COI)\n'
+			s += '   Position   Radius   Null model   Effect model\n'
+			for (coi,r),p0,p1 in zip(self.coi, self.p_coi0, self.p_coi1):
+				s += '   %s    %s      %0.5f       %0.5f\n' %(str(coi).rjust(5, ' '), str(r).rjust(5, ' '), p0, p1)
+			s += '------------------------\n'
+		if self.poi is not None:
+			s += 'H0 rejection probability (POI)\n'
+			s += '   Position     Null model    Effect model\n'
+			for poi,p0,p1 in zip(self.poi, self.p_poi0, self.p_poi1):
+				s += '   %s        %0.5f       %0.5f\n' %(str(poi).rjust(5, ' '), p0, p1)
+			s += '------------------------\n'
+		return s
+	
+	@property
+	def niters(self):
+		return self.z0.size
+
+
+
+	def assert_equal(self, other, tol=1e-6):
+		import pytest
+		assert isinstance(other, SimulationResultsSummary)
+		assert self.z0  == pytest.approx(other.z0,  abs=tol)
+		assert self.z1  == pytest.approx(other.z1,  abs=tol)
+		assert self.p1d_poi0 == pytest.approx(other.p1d_poi0,  abs=tol)
+		assert self.p1d_poi1 == pytest.approx(other.p1d_poi1,  abs=tol)
+		assert self.p1d_coi0 == pytest.approx(other.p1d_coi0,  abs=tol)
+		assert self.p1d_coi1 == pytest.approx(other.p1d_coi1,  abs=tol)
+	
+
+	def dump(self, fpath):
+		import pickle
+		with open(fpath, 'wb') as f:
+			pickle.dump(self, f)
+
+
 
 class SimulationResults(object):
 	'''
@@ -243,6 +336,10 @@ class SimulationResults(object):
 		self._calculate_prob_coi()
 
 
+	def as_summary(self):
+		return SimulationResultsSummary( self )
+	
+	
 	def assert_equal(self, other, tol=1e-6):
 		import pytest
 		assert isinstance(other, SimulationResults)
