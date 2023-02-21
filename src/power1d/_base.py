@@ -323,7 +323,7 @@ class DerivedContinuum1D(_Continuum1D):
 	'''
 	def __init__(self, value):
 		self._assert_array1d( dict(value=value) )
-		super(DerivedContinuum1D, self).__init__(value.size)
+		super().__init__(value.size)
 		self.value = value
 
 

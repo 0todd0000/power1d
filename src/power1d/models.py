@@ -96,7 +96,7 @@ class DataSample(_Noise):
 		self.set_noise(noise)
 		self.set_sample_size(J)
 		self.set_regressor(regressor)
-		super(DataSample, self).__init__(J, baseline.Q)
+		super().__init__(J, baseline.Q)
 		self.random()
 
 
@@ -143,7 +143,7 @@ class DataSample(_Noise):
 		Link noise to another DataSample object so that the linked object's
 		noise is equivalent to master object's noise.
 		'''
-		super(DataSample, self).link(other)
+		super().link(other)
 		self.noise.link(other.noise)
 
 
@@ -259,7 +259,7 @@ class DataSample(_Noise):
 
 		*J* ---- sample size (positive int)
 		'''
-		super(DataSample, self).set_sample_size(J)
+		super().set_sample_size(J)
 		assert (J >= 3) and (J<=100), 'Sample size (J) must be an integer in the range: (3, 100)'
 		self.noise.set_sample_size(J)
 		

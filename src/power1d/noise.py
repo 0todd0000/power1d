@@ -59,7 +59,7 @@ class _Noise(Sample1D):
 		else:
 			self._random()
 	def set_sample_size(self, J):
-		super(_Noise, self).set_sample_size(J)
+		super().set_sample_size(J)
 		self.random()
 	iterate = get_iterator
 
@@ -97,7 +97,7 @@ class ConstantGaussian(_Noise):
 		noise.plot()
 	'''
 	def __init__(self, J=1, Q=101, mu=0, sigma=1):
-		super(ConstantGaussian, self).__init__(J, Q)
+		super().__init__(J, Q)
 		self._assert_scalar( dict(mu=mu, sigma=sigma) )
 		self._assert_greater( dict(sigma=sigma), 0 )
 		self.mu    = mu
@@ -139,7 +139,7 @@ class ConstantUniform(_Noise):
 		noise.plot()
 	'''
 	def __init__(self, J=1, Q=101, x0=0, x1=1):
-		super(ConstantUniform, self).__init__(J, Q)
+		super().__init__(J, Q)
 		self._assert_window( dict(x0=x0), dict(x1=x1), -np.inf, +np.inf, asint=False, le=False, ge=False )
 		self.x0    = x0
 		self.x1    = x1
@@ -181,7 +181,7 @@ class Gaussian(_Noise):
 		noise.plot()
 	'''
 	def __init__(self, J=1, Q=101, mu=0, sigma=1):
-		super(Gaussian, self).__init__(J, Q)
+		super().__init__(J, Q)
 		self._assert_scalar( dict(mu=mu, sigma=sigma) )
 		self._assert_greater( dict(sigma=sigma), 0 )
 		self.mu    = mu
@@ -235,7 +235,7 @@ class Skewed(_Noise):
 		noise.plot()
 	'''
 	def __init__(self, J=8, Q=101, mu=0, sigma=1, alpha=0):
-		super(Skewed, self).__init__(J, Q)
+		super().__init__(J, Q)
 		self._assert_scalar( dict(mu=mu, sigma=sigma, alpha=alpha) )
 		self._assert_greater( dict(sigma=sigma), 0 )
 		self.mu    = mu
@@ -287,7 +287,7 @@ class SmoothGaussian(_Noise):
 		noise.plot()
 	'''
 	def __init__(self, J=1, Q=101, mu=0, sigma=1, fwhm=20, pad=False):
-		super(SmoothGaussian, self).__init__(J, Q)
+		super().__init__(J, Q)
 		self._assert_scalar( dict(mu=mu, sigma=sigma, fwhm=fwhm) )
 		self._assert_greater( dict(sigma=sigma, fwhm=fwhm), 0 )
 		self._assert_bool( dict(pad=pad) )
@@ -301,7 +301,7 @@ class SmoothGaussian(_Noise):
 		self.value  = self.mu + self.sigma * self._gen.generate_sample()
 	def set_sample_size(self, J):
 		self._gen   = Generator1D(J, self.Q, self.fwhm, self.pad)
-		super(SmoothGaussian, self).set_sample_size(J)
+		super().set_sample_size(J)
 
 
 
@@ -346,7 +346,7 @@ class SmoothSkewed(_Noise):
 		noise.plot()
 	'''
 	def __init__(self, J=8, Q=101, mu=0, sigma=1, fwhm=20, pad=True, alpha=0):
-		super(SmoothSkewed, self).__init__(J, Q)
+		super().__init__(J, Q)
 		self._assert_scalar( dict(mu=mu, sigma=sigma, fwhm=fwhm, alpha=alpha) )
 		self._assert_bool( dict(pad=pad) )
 		self._assert_greater( dict(sigma=sigma), 0 )
@@ -381,7 +381,7 @@ class SmoothSkewed(_Noise):
 
 	def set_sample_size(self, J):
 		self._gen   = Generator1D(J, self.Q, self.fwhm, self.pad)
-		super(SmoothSkewed, self).set_sample_size(J)
+		super().set_sample_size(J)
 
 
 
@@ -412,7 +412,7 @@ class Uniform(_Noise):
 		noise.plot()
 	'''
 	def __init__(self, J=1, Q=101, x0=0, x1=1):
-		super(Uniform, self).__init__(J, Q)
+		super().__init__(J, Q)
 		self._assert_window( dict(x0=x0), dict(x1=x1), -np.inf, +np.inf, asint=False, le=False, ge=False )
 		self.x0    = x0
 		self.x1    = x1
@@ -455,7 +455,7 @@ class Additive(_Noise):
 		self._assert_instance_all( dict(noise_models=noise_models), [_Noise] )
 		self._assert_same_shape_all( dict(noise_models=noise_models), withJ=True )
 		self.models  = list( noise_models )
-		super(Additive, self).__init__(self.models[0].J, self.models[0].Q)
+		super().__init__(self.models[0].J, self.models[0].Q)
 		self._random()
 	def _random(self):
 		y          = np.zeros(  (self.J, self.Q)  )
@@ -495,7 +495,7 @@ class Mixture(_Noise):
 		self.models  = list( noise_models )
 		J            = sum([m.J  for m in self.models])
 		Q            = self.models[0].Q
-		super(Mixture, self).__init__(J, Q)
+		super().__init__(J, Q)
 		self._random()
 	def _random(self):
 		y          = []
@@ -541,7 +541,7 @@ class Scaled(_Noise):
 		self._assert_same_shape( dict(noise=noise), dict(scale=scale), withJ=False )
 		self.noise = noise
 		self.scale = scale
-		super(Scaled, self).__init__(noise.J, noise.Q)
+		super().__init__(noise.J, noise.Q)
 		self._random()
 	def _random(self):
 		self.noise.random()
@@ -594,7 +594,7 @@ class SignalDependent(_Noise):
 		self.noise  = noise
 		self.signal = signal
 		self.fn     = fn
-		super(SignalDependent, self).__init__(noise.J, noise.Q)
+		super().__init__(noise.J, noise.Q)
 		self._random()
 	def _random(self):
 		self.noise.random()

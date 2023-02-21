@@ -62,7 +62,7 @@ class Generator1D(object):
 	'''
 	
 	def __init__(self, nResponses=1, nodes=101, FWHM=10, pad=False):
-		super(Generator1D, self).__init__()
+		super().__init__()
 		self.FWHM          = float(FWHM)
 		self.SCALE         = None    #scale factor to return smoothed data to unit variance
 		self.SD            = None    #standard deviation of the Gaussian kernel
@@ -195,7 +195,7 @@ class GeneratorMulti1D(Generator1D):
 	'''
 	
 	def __init__(self, nResponses=1, nodes=101, nComponents=2, FWHM=10, W=None, pad=False):
-		super(GeneratorMulti1D, self).__init__(nResponses, nodes, FWHM, pad)
+		super().__init__(nResponses, nodes, FWHM, pad)
 		self.nComponents   = int(nComponents)
 		if W is None:
 			self.W         = np.eye(self.nComponents)

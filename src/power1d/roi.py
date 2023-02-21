@@ -97,7 +97,7 @@ class RegionOfInterest(_Continuum1D):
 		assert x.sum()>0, 'Input to RegionOfInterest must contain at least one True value'
 		Q       = x.size
 		self.params = dict(x=x)
-		super(RegionOfInterest, self).__init__(Q)
+		super().__init__(Q)
 
 	def _build(self):
 		self.value  = self.params['x']
