@@ -2,7 +2,7 @@
 import os
 import numpy as np
 from scipy import stats
-from matplotlib import pyplot
+import matplotlib.pyplot as plt
 import power1d
 
 
@@ -57,22 +57,22 @@ for J in JJ:
 	PP1.append(P1)
 PP0,PP1 = np.array(PP0), np.array(PP1)
 dir0    = os.path.dirname( __file__ )
-fname   = os.path.join(dir0, 'val_0d_twotail.npz')
+fname   = os.path.join(dir0, 'data', 'val_0d_twotail.npz')
 np.savez(fname, PP0=PP0, PP1=PP1)
 
 
 dir0    = os.path.dirname( __file__ )
-fname   = os.path.join(dir0, 'val_0d_twotail.npz')
+fname   = os.path.join(dir0, 'data', 'val_0d_twotail.npz')
 with np.load(fname) as Z:
 	PP0 = Z['PP0']
 	PP1 = Z['PP1']
 
 #(2) Plot:
-pyplot.close('all')
+plt.close('all')
 ### create figure:
-pyplot.figure(figsize=(4,3))
+plt.figure(figsize=(4,3))
 ### create axes:
-ax       = pyplot.axes([0.14,0.18,0.84,0.8])
+ax       = plt.axes([0.14,0.18,0.84,0.8])
 colors   = 'b', 'g', 'r'
 ls       = '-', '--', ':'
 for c,lss,P0,P1,J in zip( colors, ls, PP0, PP1 , JJ ):
@@ -81,7 +81,7 @@ for c,lss,P0,P1,J in zip( colors, ls, PP0, PP1 , JJ ):
 	ax.set_xlabel('Effect size', size=12)
 	ax.set_ylabel('Power', size=12)
 ax.legend()
-pyplot.show()
+plt.show()
 
 
 

@@ -1,5 +1,5 @@
 
-from matplotlib import pyplot
+import matplotlib.pyplot as plt
 import power1d
 
 
@@ -20,10 +20,10 @@ yC = y0 ** y1
 
 
 #(1) Plot:
-pyplot.close('all')
-pyplot.figure(figsize=(8,3))
-ax0      = pyplot.axes([0.09,0.18,0.41,0.8])
-ax1      = pyplot.axes([0.57,0.18,0.41,0.8])
+plt.close('all')
+plt.figure(figsize=(8,3))
+ax0      = plt.axes([0.09,0.18,0.41,0.8])
+ax1      = plt.axes([0.57,0.18,0.41,0.8])
 AX       = [ax0,ax1]
 y0.plot(ax=ax0, color='b', ls='-', label='y0')
 y1.plot(ax=ax0, color='g', ls='--', label='y1')
@@ -39,7 +39,7 @@ ax1.legend(loc=(0.15,0.7))
 ax0.set_ylabel('Continuum value', size=12)
 labels   = '(a)', '(b)'
 [ax.text(0.03, 0.91, s, size=12, transform=ax.transAxes)   for ax,s in zip(AX,labels)]
-pyplot.show()
+plt.show()
 
 
 

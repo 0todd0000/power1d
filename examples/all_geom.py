@@ -1,6 +1,6 @@
 
 import numpy as np
-from matplotlib import pyplot
+import matplotlib.pyplot as plt
 import power1d
 
 
@@ -30,8 +30,8 @@ continua.append(   power1d.geom.TriangleTooth(Q, q0=20, q1=35, x0=-1, x1=2.5, dq
 
 
 #(1) Plot:
-pyplot.close('all')
-pyplot.figure(figsize=(12,6))
+plt.close('all')
+plt.figure(figsize=(12,6))
 axx    = np.linspace(0.05, 0.82, 5)
 axy    = np.linspace(0.71, 0.09, 3)
 axw    = 0.17
@@ -40,18 +40,18 @@ i      = 0
 AX     = []
 for axyy in axy:
 	for axxx in axx:
-		ax = pyplot.axes( [ axxx, axyy, axw, axh ] )
+		ax = plt.axes( [ axxx, axyy, axw, axh ] )
 		c  = continua[i]
 		c.plot(ax=ax)
 		ax.text(0.05, 0.9, '%s' %c.__class__.__name__, size=13, transform=ax.transAxes, bbox=dict(facecolor='w', alpha=0.5))
 		AX.append(ax)
 		i += 1
-pyplot.setp(AX, ylim=(-2.5,4))
+plt.setp(AX, ylim=(-2.5,4))
 for ax in AX[10:]:
 	ax.set_xlabel('Continuum position', size=12)
 for ax in [AX[0], AX[5], AX[10]]:
 	ax.set_ylabel('Continuum value', size=12)
-pyplot.show()
+plt.show()
 
 
 

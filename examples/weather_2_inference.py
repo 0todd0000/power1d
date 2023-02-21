@@ -6,7 +6,7 @@ Canadian temperature data (Ramsay and Silverman, 2005)
 from math import log
 import numpy as np
 from scipy import stats
-from matplotlib import pyplot
+import matplotlib.pyplot as plt
 import power1d
 
 
@@ -76,12 +76,12 @@ tstar_b  = stats.t.isf(pcrit, df)   #Bonferroni threshold
 
 
 #(2) Plot:
-pyplot.close('all')
+plt.close('all')
 
 ### create figure:
-pyplot.figure(figsize=(4,3))
+plt.figure(figsize=(4,3))
 ### create axes:
-ax       = pyplot.axes([0.12,0.18,0.86,0.8])
+ax       = plt.axes([0.12,0.18,0.86,0.8])
 ax.plot(t, 'k-', label='Test statistic continuum')
 ax.axhline(tstar_b, color='r', ls='-', label=r'Bonferroni threshold ($\alpha$=0.05)')
 ax.axhline(tstar,   color='g', ls='--', label=r'RFT threshold ($\alpha$=0.05)')
@@ -92,7 +92,7 @@ ax.axhline(tstar_u, color='b', ls=':', label=r'Uncorrected threshold ($\alpha$=0
 ax.legend(fontsize=8, loc=(0.12,0.67))
 ax.set_xlabel('Day', size=14)
 ax.set_ylabel('t value', size=14)
-pyplot.show()
+plt.show()
 
 
 
