@@ -310,6 +310,15 @@ class _Continuum1D(_ContniuumObject):
 		with GzipFile( fpath, 'w') as f:
 			np.save(file=f, arr=self.value)
 
+	def set_attr(self, attr, value):
+		setattr(self, attr, value)
+		self._build()
+
+	def set_attrs(self, **kwargs):
+		for attr,value in kwargs.items():
+			setattr(self, attr, value)
+		self._build()
+
 
 class DerivedContinuum1D(_Continuum1D):
 	'''

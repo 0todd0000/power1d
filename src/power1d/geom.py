@@ -278,7 +278,9 @@ class GaussianPulse(_Continuum1D):
 		obj.plot()
 	'''
 
-	def __init__(self, Q=101, q=50, fwhm=None, sigma=None, amp=5):
+	def __init__(self, Q=101, q=50, fwhm=None, sigma=None, amp=1):
+		if (sigma is None) and (fwhm is None):
+			sigma = 5
 		### field size parameters:
 		self._assert_Q(Q)
 		self._assert_integer(  dict(q=q)  )
@@ -350,6 +352,8 @@ class Linear(_Continuum1D):
 		obj.plot()
 	'''
 	def __init__(self, Q=101, x0=0, x1=None, slope=None):
+		if (x1 is None) and (slope is None):
+			x1 = 1
 		self._assert_scalar(  dict(x0=x0)  )
 		self._assert_one_of_two_none( dict(x1=x1, slope=slope) )
 		if x1 is None:
