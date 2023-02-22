@@ -19,6 +19,66 @@ from . _base import _Continuum1D
 
 
 
+def from_array(x):
+	'''
+	Create Continuum1D geometry object(s) from a 1D or 2D array.
+	
+	Arguments:
+
+	*x* ---- one-dimensional NumPy array
+
+
+	Example:
+
+	.. plot::
+		:include-source:
+
+		import numpy as np
+		import power1d
+
+		x     = np.random.rand( 101 )
+		obj   = power1d.geom.from_array( x ) # Continuum1D object
+		obj.plot()
+	
+		x     = np.random.rand( 5, 101 )
+		objs  = power1d.geom.from_array( x ) # list of Continuum1D objects
+		[obj.plot()  for obj in objs]
+	'''
+	assert isinstance(x, np.ndarray), 'x must be a numpy array.'
+	assert x.ndim in [1,2], 'x must be a one- or two-dimensional array.\nAcutal dimensionality: %d' %value.ndim
+	assert x.size > 1, 'x must have more than one element.'
+	if x.ndim ==2:
+		return [Continuum1D(xx) for xx in x]
+	else:
+		return Continuum1D(x)
+
+
+def from_file( fpath ):
+	'''
+	Create Continuum1D geometry object(s) from a CSV file.
+	
+	Only CSV files are currently supported.
+	
+	1D arrays can be saved as either a single row or a
+	single column in a CSV file.
+	
+	2D arrays must be saved with shape (nrow,ncol) where
+	nrow is the number of 1D arrays and each row will be
+	converted to a Continuum1D object
+	
+	Arguments:
+
+	*fpath* ---- full path to a CSV file
+	'''
+	import os
+	assert os.path.exists( fpath ), f'File "{fpath}" not found.'
+	assert fpath.upper().endswith( '.CSV' ), f'File extension must be CSV.'
+	a = np.loadtxt( fpath, delimiter=',' )
+	return from_array( a )
+
+
+
+
 def gaussian_kernel(sd):
 	'''
 	Create a Gaussian kernel with the specified standard deviation (sd).
@@ -103,7 +163,7 @@ def gaussian_kernel(sd):
 class Continuum1D(_Continuum1D):
 	'''
 	Manually defined one-dimensional continuum geometry.
-
+	
 	Arguments:
 
 	*value* ---- one-dimensional NumPy array
