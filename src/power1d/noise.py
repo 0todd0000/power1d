@@ -20,6 +20,35 @@ from . random import Generator1D
 
 
 
+def from_array(noise, x):
+	'''
+	Create Scaled noise object from a 1D array.
+	
+	Arguments:
+
+	*noise* ---- a Noise object
+	
+	*x* ---- one-dimensional NumPy array
+
+
+	Example:
+
+	.. plot::
+		:include-source:
+
+		import numpy as np
+		import power1d
+
+		x      = np.random.rand( 101 )
+		noise  = power1d.noise.Gaussian( J, Q, mu=0, sigma=1 )
+		snoise = power1d.geom.from_array( noise, x ) # Continuum1D object
+		snoise.plot()
+	'''
+	assert isinstance(x, np.ndarray), 'x must be a numpy array.'
+	assert x.ndim == 1, 'x must be a one-dimensional array.\nAcutal dimensionality: %d' %value.ndim
+	assert x.size == noise.Q, f'x must have the same number of elements as the noise object. x has {x.size} elements and noise has {noise.Q} elements.'
+	return Scaled(noise, x)
+
 
 class _Noise(Sample1D):
 	'''
