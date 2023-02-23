@@ -47,6 +47,7 @@ def from_array(noise, x):
 	assert isinstance(x, np.ndarray), 'x must be a numpy array.'
 	assert x.ndim == 1, 'x must be a one-dimensional array.\nAcutal dimensionality: %d' %value.ndim
 	assert x.size == noise.Q, f'x must have the same number of elements as the noise object. x has {x.size} elements and noise has {noise.Q} elements.'
+	assert np.all( x > 0 ), 'All values in x must be greater than zero.'
 	return Scaled(noise, x)
 
 
