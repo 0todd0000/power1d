@@ -8,6 +8,32 @@ import os
 import numpy as np
 
 
+def file2geom( fpath ):
+	'''
+	Create Continuum1D geometry object(s) from a CSV file.
+	
+	Only CSV files are currently supported.
+	
+	1D arrays can be saved as either a single row or a
+	single column in a CSV file.
+	
+	2D arrays must be saved with shape (nrow,ncol) where
+	nrow is the number of 1D arrays and each row will be
+	converted to a Continuum1D object
+	
+	Arguments:
+
+	*fpath* ---- full path to a CSV file
+	'''
+	import os,pathlib
+	from . geom import from_array
+	assert os.path.exists( fpath ), f'File "{fpath}" not found.'
+	ext   = ''.join(  pathlib.Path( fpath ).suffixes ).lower()
+	assert ext in ['.csv', '.csv.gz'], f'File extension must be ".csv" or ".csv.gz"'
+	a = np.loadtxt( fpath, delimiter=',' )
+	return from_array( a )
+
+
 def file2datasamplemodel( fpath ):
 	import pathlib
 	from . models import datasample_from_array
