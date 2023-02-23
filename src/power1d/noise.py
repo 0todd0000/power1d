@@ -16,7 +16,7 @@ from . _base import Sample1D, _Continuum1D
 # from . signals import _Signal,Signal
 from . geom import Continuum1D
 from . random import Generator1D
-
+from . _assert import _assert_spm1d
 
 
 
@@ -41,7 +41,7 @@ def from_array(noise, x):
 
 		x      = np.random.rand( 101 )
 		noise  = power1d.noise.Gaussian( J, Q, mu=0, sigma=1 )
-		snoise = power1d.geom.from_array( noise, x ) # Continuum1D object
+		snoise = power1d.noise.from_array( noise, x ) # scaled noise object
 		snoise.plot()
 	'''
 	assert isinstance(x, np.ndarray), 'x must be a numpy array.'
@@ -49,6 +49,44 @@ def from_array(noise, x):
 	assert x.size == noise.Q, f'x must have the same number of elements as the noise object. x has {x.size} elements and noise has {noise.Q} elements.'
 	assert np.all( x > 0 ), 'All values in x must be greater than zero.'
 	return Scaled(noise, x)
+
+
+def from_residuals( r, pad=False ):
+	'''
+	Create Scaled noise object from a set of experimental residuals.
+	
+	The mean of the residuals must be zero (i.e., the null continuum)
+	
+	A convenient way to calculate residuals is to us spm1d as shown in the example below.
+	
+	Arguments:
+
+	*r* ---- a (J,Q) array of experimental residuals (J=observations, Q=domain nodes)
+
+
+	Example:
+
+	.. plot::
+		:include-source:
+
+		import numpy as np
+		import power1d
+
+		y      = power1d.data.weather()['Atlantic']
+		r      = y - y.mean( axis=0 )
+		snoise = power1d.noise.from_residuals( r ) # scaled noise object
+		snoise.plot()
+	'''
+	assert isinstance(r, np.ndarray), 'r must be a numpy array.'
+	assert r.ndim == 2, 'r must be a two-dimensional array.\nAcutal dimensionality: %d' %r.ndim
+	_assert_spm1d()
+	# create scaled noise model:
+	import spm1d
+	J,Q   = r.shape
+	s     = r.std(axis=0, ddof=1)
+	fwhm  = spm1d.geom.estimate_fwhm( r )
+	noise = SmoothGaussian(J, Q, fwhm=fwhm, pad=pad)
+	return Scaled(noise, s)
 
 
 class _Noise(Sample1D):
