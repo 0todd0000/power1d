@@ -21,6 +21,10 @@ from . results import SimulationResults
 
 
 def datasample_from_array( y ):
+	'''
+	y        = power1d.data.weather()['Atlantic']
+	model    = power1d.models.datasample_from_array( y )
+	'''
 	from . import geom
 	from . noise import from_residuals
 	J,Q      = y.shape
