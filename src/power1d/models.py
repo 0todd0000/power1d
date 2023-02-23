@@ -20,6 +20,19 @@ from . results import SimulationResults
 
 
 
+def datasample_from_array( y ):
+	from . import geom
+	from . noise import from_residuals
+	J,Q      = y.shape
+	m        = y.mean( axis=0 )
+	r        = y - m
+	baseline = geom.Continuum1D( m )
+	signal   = geom.Null( Q=Q )
+	noise    = from_residuals( r )
+	model    = DataSample(baseline, signal, noise, J=J)
+	return model
+
+
 
 
 class ProgressBar(object):
