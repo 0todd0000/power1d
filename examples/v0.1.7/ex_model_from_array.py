@@ -1,10 +1,12 @@
 
-
+import os
+import numpy as np
 from matplotlib import pyplot as plt
 import power1d
 
 
-y        = power1d.data.weather()['Atlantic']
+fpath    = os.path.join( os.path.dirname( __file__ ), 'data', 'Neptune1999kneeflex.csv')
+y        = np.loadtxt( fpath, delimiter=',')
 model    = power1d.models.datasample_from_array( y )
 
 
