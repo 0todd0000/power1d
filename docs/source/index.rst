@@ -1,14 +1,24 @@
-.. power1d documentation master file, created by
-   sphinx-quickstart on Sun Feb 26 16:19:09 2023.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
-Welcome to power1d's documentation!
-===================================
+Introduction
+=====================================
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+**power1d** is a software package for numerically estimating statistical
+power in experiments involving one-dimensional continua.
+
+Dependencies:
+
+* Python 3
+* NumPy
+* SciPy
+* Matplotlib 
+
+
+**Please cite**:
+
+Pataky TC (2017) Power1D: A Python toolbox for numerical power estimates in experiments involving one-dimensional continua. PeerJ Computer Science 3: e125. DOI: 10.7717/peerj-cs.125
+
+https://peerj.com/articles/cs-125/
+
 
 
 
