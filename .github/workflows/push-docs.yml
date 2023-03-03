@@ -8,18 +8,23 @@ jobs:
     publish:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v2
-            - uses: actions/setup-python@v4
-            with:
-                python-version: '3.9'
-            - run: pip install numpy scipy matplotlib
-            - name: build documentation
+            - name: Checkout
+              uses: actions/checkout@v2
+            - name: Setup Python 
+              uses: actions/setup-python@v4
+              with:
+                  python-version: '3.9'
+            - name: Install dependencies
+              run: pip install numpy scipy matplotlib
+            - name: Build documentation
               run: make html
-            - run: touch docs/.nojekyll
-            - uses: cpina/github-action-push-to-another-repository@main
-            env:
-                SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
-            with:
+            - name: Add .nojekyll
+              run: touch docs/.nojekyll
+            - name: Push to spm1d gh-pages
+              uses: cpina/github-action-push-to-another-repository@main
+              env:
+                  SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
+              with:
                 source-directory: 'docs'
                 destination-github-username: '0todd0000'
                 destination-repository-name: 'spm1d'
