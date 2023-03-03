@@ -17,7 +17,7 @@ jobs:
             - name: Install dependencies
               run: pip install numpy scipy matplotlib
             - name: Build documentation
-              run: make html
+              run: docs/make html
             - name: Add .nojekyll
               run: touch docs/.nojekyll
             - name: Push to spm1d gh-pages
