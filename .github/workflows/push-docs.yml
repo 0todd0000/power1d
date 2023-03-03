@@ -15,7 +15,7 @@ jobs:
               with:
                   python-version: '3.9'
             - name: Install dependencies
-              run: pip install numpy scipy matplotlib
+              run: pip install -U numpy scipy matplotlib sphinx
             - name: Build documentation
               run: |
                   cd docs
