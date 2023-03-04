@@ -33,3 +33,14 @@ jobs:
                 user-email: 0todd0@gmail.com
                 target-branch: gh-pages
                 target-directory: power1d
+            - name: Push images to spm1d gh-pages
+              uses: cpina/github-action-push-to-another-repository@main
+              env:
+                  SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
+              with:
+                source-directory: 'docs/build/html/_images'
+                destination-github-username: '0todd0000'
+                destination-repository-name: 'spm1d'
+                user-email: 0todd0@gmail.com
+                target-branch: gh-pages
+                target-directory: power1d/_images
