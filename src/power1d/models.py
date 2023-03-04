@@ -624,7 +624,7 @@ class ExperimentSimulator(object):
 		Estimate sample size required to achieve a target power.
 		
 		When *coi* is None the omnibus power is used.
-		When *coi* is a dictionary then the COI power is used, e.g. coi=dict(q=65, r=3)
+		When *coi* is a dictionary then the COI power is used, e.g. :code:`coi=dict(q=65, r=3)`
 
 		Arguments:
 		

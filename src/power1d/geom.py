@@ -25,7 +25,11 @@ def from_array(x):
 	
 	Arguments:
 
-	*x* ---- one-dimensional NumPy array
+	*x* ---- 1- or 2-dimensional numpy array
+	
+	Outputs:
+	
+	*obj* ---- a Continuum1D object
 
 
 	Example:
@@ -55,6 +59,26 @@ def from_array(x):
 
 
 def from_file( fpath ):
+	'''
+	Create Continuum1D geometry object(s) from a CSV file.
+	
+	Only CSV files are currently supported.
+	
+	1D arrays can be saved as either a single row or a
+	single column in a CSV file.
+	
+	2D arrays must be saved with shape (nrow,ncol) where
+	nrow is the number of 1D arrays and each row will be
+	converted to a Continuum1D object
+	
+	Arguments:
+
+	*fpath* ---- full path to a CSV file
+	
+	Outputs:
+	
+	*obj* ---- a Continuum1D object
+	'''
 	from . io import file2geom
 	return file2geom( fpath )
 
