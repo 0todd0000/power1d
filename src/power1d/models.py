@@ -22,8 +22,42 @@ from . results import SimulationResults
 
 def datasample_from_array( y ):
 	'''
-	y        = power1d.data.weather()['Atlantic']
-	model    = power1d.models.datasample_from_array( y )
+	Convenience function for creating a data sample from
+	a set of of 1D observations.
+	
+	The input array must have a shape (J,Q) where:
+	
+		J = number of observations
+		
+		Q = number of continuum nodes
+	
+	WARNING! "datasample_from_array" uses a relatively simple
+	SmoothGaussian noise model, and this may NOT embody all
+	features of real, experimental noise. In this case more
+	complex noise modeling (e.g. Additive, Mixture) may
+	be required. Refer to the noise module for more details.
+	
+	.. plot::
+		:include-source:
+
+		import numpy as np
+		import matplotlib.pyplot as plt
+		import power1d
+
+		y        = power1d.data.weather()['Atlantic']
+		model    = power1d.models.datasample_from_array( y )
+
+		plt.close('all')
+		fig,axs = plt.subplots(1, 3, figsize=(10,3), tight_layout=True)
+		axs[0].plot( y.T )
+		np.random.seed(0)
+		model.random()
+		model.plot( ax=axs[1])
+		model.random()
+		model.plot( ax=axs[2] )
+		labels  = 'Original data', 'DataSample model', 'DataSample model (new noise)'
+		[ax.set_title(s) for ax,s in zip(axs,labels)]
+		plt.show()
 	'''
 	from . import geom
 	from . noise import from_residuals
@@ -369,9 +403,9 @@ class Experiment(object):
 			raise( ValueError('"fn" exited with errors.  It must accept data_model.value as its input argument and return an array with length Q')  )
 		### check function output size:
 		y   = fn( *values )
-		assert isinstance(y, np.ndarray), '"fn" must return a NumPy array.'
-		assert y.ndim==1, '"fn" must return a one-dimensional NumPy array.'
-		assert y.size==Q, '"fn" must return a NumPy array of length Q.'
+		assert isinstance(y, np.ndarray), '"fn" must return a numpy array.'
+		assert y.ndim==1, '"fn" must return a one-dimensional numpy array.'
+		assert y.size==Q, '"fn" must return a numpy array of length Q.'
 		### set attributes:
 		self.Q           = Q              #: continuum length
 		self.data_models = dmodels        #: data models

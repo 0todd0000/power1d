@@ -24,12 +24,21 @@ def from_array(noise, x):
 	'''
 	Create Scaled noise object from a 1D array.
 	
+	This function is equivalent to creating a Scaled noise object.
+	
+	While redundant this function is included for API consistency,
+	as a sister-function to geom.from_array and
+	models.datasample_from_array
+	
 	Arguments:
 
 	*noise* ---- a Noise object
 	
-	*x* ---- one-dimensional NumPy array
+	*x* ---- scaling array (1D numpy array)
 
+	Outputs:
+	
+	*obj* ---- a Scaled noise object
 
 	Example:
 
@@ -37,12 +46,22 @@ def from_array(noise, x):
 		:include-source:
 
 		import numpy as np
+		import matplotlib.pyplot as plt
 		import power1d
 
-		x      = np.random.rand( 101 )
-		noise  = power1d.noise.Gaussian( J, Q, mu=0, sigma=1 )
+		J      = 8  # sample size
+		Q      = 101  # number of continuum nodes
+		x      = 5.1 + 5 * np.sin( np.linspace(0, 4*np.pi, Q) )
+		noise  = power1d.noise.SmoothGaussian( J, Q, fwhm=30 ) # baseline noise model
 		snoise = power1d.noise.from_array( noise, x ) # scaled noise object
-		snoise.plot()
+
+		fig,axs = plt.subplots(1, 3, figsize=(10,3), tight_layout=True)
+		noise.plot( ax=axs[0] )
+		axs[1].plot( x )
+		snoise.plot( ax=axs[2] )
+		labels  = 'Baseline noise model', 'Scaling array', 'Scaled noise'
+		[ax.set_title(s) for ax,s in zip(axs,labels)]
+		plt.show()
 	'''
 	assert isinstance(x, np.ndarray), 'x must be a numpy array.'
 	assert x.ndim == 1, 'x must be a one-dimensional array.\nAcutal dimensionality: %d' %value.ndim
@@ -53,15 +72,23 @@ def from_array(noise, x):
 
 def from_residuals( r, pad=False ):
 	'''
-	Create Scaled noise object from a set of experimental residuals.
+	Convenience function for creating Scaled noise objects from sets of
+	experimental residuals.
 	
 	The mean of the residuals must be zero (i.e., the null continuum)
 	
-	A convenient way to calculate residuals is to us spm1d as shown in the example below.
+	WARNING! As shown in the example below, "from_residuals" may produce a
+	noise model that does NOT embody all features of the residuals. In
+	this case more complex noise modeling (e.g. Additive, Mixture) may
+	be required.
 	
 	Arguments:
 
 	*r* ---- a (J,Q) array of experimental residuals (J=observations, Q=domain nodes)
+
+	Outputs:
+	
+	*obj* ---- a Scaled noise object
 
 
 	Example:
@@ -70,12 +97,20 @@ def from_residuals( r, pad=False ):
 		:include-source:
 
 		import numpy as np
+		import matplotlib.pyplot as plt
 		import power1d
 
 		y      = power1d.data.weather()['Atlantic']
-		r      = y - y.mean( axis=0 )
+		r      = y - y.mean( axis=0 ) # residuals
 		snoise = power1d.noise.from_residuals( r ) # scaled noise object
-		snoise.plot()
+
+		fig,axs = plt.subplots(1, 3, figsize=(10,3), tight_layout=True)
+		axs[0].plot( y.T )
+		axs[1].plot( r.T )
+		snoise.plot( ax=axs[2] )
+		labels  = 'Original data', 'Residuals', 'Scaled noise model'
+		[ax.set_title(s) for ax,s in zip(axs,labels)]
+		plt.show()
 	'''
 	assert isinstance(r, np.ndarray), 'r must be a numpy array.'
 	assert r.ndim == 2, 'r must be a two-dimensional array.\nAcutal dimensionality: %d' %r.ndim

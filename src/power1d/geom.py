@@ -171,7 +171,7 @@ class Continuum1D(_Continuum1D):
 	
 	Arguments:
 
-	*value* ---- one-dimensional NumPy array
+	*value* ---- one-dimensional numpy array
 
 
 	Example:

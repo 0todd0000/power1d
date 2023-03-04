@@ -21,7 +21,7 @@ def weather():
 	| on 28 March 2017 (see the ./examples/weather directory).
 
 	The data have been converted from the original form in
-	the "daily.mat" file to NumPy format and saved in
+	the "daily.mat" file to numpy format and saved in
 	./power1d/data/weather/daily.npz
 	
 	This is a convenience function for loading those data.

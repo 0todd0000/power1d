@@ -91,7 +91,7 @@ class RegionOfInterest(_Continuum1D):
 		try:
 			x       = np.array(x)
 		except:
-			raise ValueError('Input to RegionOfInterest must be a list or a NumPy array')
+			raise ValueError('Input to RegionOfInterest must be a list or a numpy array')
 		assert x.ndim==1, 'Input to RegionOfInterest must be a one-dimensional array'
 		assert issubclass(x.dtype.type, np.bool_), 'Input to RegionOfInterest must only True and False values'
 		assert x.sum()>0, 'Input to RegionOfInterest must contain at least one True value'

@@ -1,5 +1,8 @@
 '''
-IO functions
+IO functions.
+
+This module contains convenience functions for high-level
+creation of geometry and DataSample models from data files.
 '''
 
 # Copyright (C) 2023  Todd Pataky
@@ -12,7 +15,7 @@ def file2geom( fpath ):
 	'''
 	Create Continuum1D geometry object(s) from a CSV file.
 	
-	Only CSV files are currently supported.
+	Only CSV (and CSV.GZ) files are currently supported.
 	
 	1D arrays can be saved as either a single row or a
 	single column in a CSV file.
@@ -24,6 +27,11 @@ def file2geom( fpath ):
 	Arguments:
 
 	*fpath* ---- full path to a CSV file
+
+
+	Outputs:
+	
+	*obj* ---- a Continuum1D object
 	'''
 	import os,pathlib
 	from . geom import from_array
@@ -35,10 +43,34 @@ def file2geom( fpath ):
 
 
 def file2datasamplemodel( fpath ):
+	'''
+	Create a DataSample model from a CSV file.
+	
+	The following formats are currently supported:
+	
+	- .csv
+	- .csv.gz
+	- .mat
+	- .npy
+	- .npy.gz
+	
+	
+	In all cases, the data file must contain a 2D array
+	with shape (J,Q);  J=observations, Q=domain nodes
+	
+	Arguments:
+
+	*fpath* ---- full path to a data file
+	
+	Outputs:
+	
+	*model* ---- a DataSample model
+	'''
+	
 	import pathlib
 	from . models import datasample_from_array
 	ext   = ''.join(  pathlib.Path( fpath ).suffixes ).lower()
-	if ext == '.csv':
+	if ext in ['.csv', '.csv.gz']:
 		y = np.loadtxt( fpath, delimiter=',')
 	elif ext.lower() == '.mat':
 		from scipy.io import loadmat
