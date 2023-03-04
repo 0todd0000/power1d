@@ -1,7 +1,7 @@
 power1d
 =======
 
-Numerical Power Estimates for One-Dimensional Continua
+Numerical power estimates for one-dimensional continua
  
  
 Software documentation:
@@ -14,16 +14,41 @@ continua. PeerJ Computer Science 3: e125. DOI: 10.7717/peerj-cs.125
 
 https://peerj.com/articles/cs-125/
 
+<br>
+<br>
+
+Install
+---------
+
+```
+pip install power1d
+```
+
+<br>
+<br>
+
+Download
+---------
+
+**Download**
+
+`Python source code <https://github.com/0todd0000/power1d/archive/master.zip>`_
+
+<br>
+<br>
 
 
 Issues
--------
+---------
 
 Please report software bugs or other problems by searching existing issues or creating a new issue [here](https://github.com/0todd0000/spm1d/issues).
 
+<br>
+<br>
+
 
 License
--------
+---------
 
 power1d is a package for numerically estimating statistical power in experiments involving one-dimensional continua.
 
