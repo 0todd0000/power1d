@@ -1,5 +1,4 @@
 name: push-pypi
-# name: push-test-pypi
 
 on:
   push:
