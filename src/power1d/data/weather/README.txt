@@ -15,5 +15,5 @@ Ramsay JO, Silverman BW (2005). Functional Data Analysis
 Chapter 13: "Modelling functional responses with
 multivariate covariates"
 
-The data are also saved in NumPy format as "daily.npz"
+The data are also saved in numpy format as "daily.npz"
 for more convenient access from Python.

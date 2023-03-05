@@ -1,6 +1,6 @@
 
 import numpy as np
-from matplotlib import pyplot
+import matplotlib.pyplot as plt
 import power1d
 
 
@@ -31,18 +31,18 @@ noise2.random()
 
 
 # (1) Plot:
-pyplot.close('all')
+plt.close('all')
 fontname = u'DejaVu Sans'
-fig = pyplot.figure(figsize=(8,2.5))
+fig = plt.figure(figsize=(8,2.5))
 ### create axes:
 axx = np.linspace(0.06,0.7,3)
 axy = 0.19
 axw = 0.29
 axh = 0.78
-AX  = [pyplot.axes([x, axy, axw, axh])  for x in axx]
+AX  = [plt.axes([x, axy, axw, axh])  for x in axx]
 ax0,ax1,ax2  = AX
 [ax.set_yticklabels([])  for ax in [ax1,ax2]]
-[pyplot.setp(ax.get_xticklabels() + ax.get_yticklabels(), size=8)  for ax in AX]
+[plt.setp(ax.get_xticklabels() + ax.get_yticklabels(), size=8)  for ax in AX]
 ### colors and line widths:
 cb,cn,cs = 'k', '0.4', (0.4,0.8,0.4)
 lws      = 4
@@ -60,7 +60,7 @@ baseline.plot(ax=ax2, color=cb)
 noise2.plot(ax=ax2, color=cn, lw=0.5)
 signal2.plot(ax=ax2, color=cs, lw=lws)
 ### adjust axes:
-pyplot.setp(AX, ylim=(-4,4))
+plt.setp(AX, ylim=(-4,4))
 [ax.set_xlabel('Continuum position (%)', size=11, name=fontname)  for ax in AX]
 ax0.set_ylabel('Dependent variable', size=11, name=fontname)
 ### legend:
@@ -68,7 +68,7 @@ ax0.legend([ax0.lines[1], ax0.lines[-1]], ['Noise','Signal'])
 ### panel labels:
 labels  = 'Inflated variance', 'Non-central RFT', 'Numerical'
 [ax.text(0.05,0.9, '(%s)  %s'%(chr(97+i),s), name=fontname, transform=ax.transAxes, size=11)  for i,(ax,s) in enumerate(zip(AX,labels))]
-pyplot.show()
+plt.show()
 
 
 

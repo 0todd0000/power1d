@@ -19,7 +19,7 @@ Example:
 	:include-source:
 
 	import numpy as np
-	from matplotlib import pyplot
+	import matplotlib.pyplot as plt
 	import power1d
 
 	J        = 8
@@ -37,13 +37,12 @@ Example:
 	sim      = power1d.models.ExperimentSimulator(emodel0, emodel1)
 	results  = sim.simulate(iterations=200, progress_bar=True)
 	
-	pyplot.close('all')
+	plt.close('all')
 	results.plot()
 '''
 
+# Copyright (C) 2023  Todd Pataky
 
-# Copyright (C) 2017  Todd Pataky
-# version: 0.1 (2017/04/01)
 
 
 import numpy as np
@@ -67,13 +66,106 @@ def _pkmax(Z, u, k):
 	return p
 
 
+class SimulationResultsSummary(object):
+	'''
+	A class containing a reduced set of simulation results.
+	Designed primarily for unit testing.
+	
+	Create using SimulationResults.as_summary()
+	'''
+	def __init__(self, results):
+		self.alpha         = results.alpha
+		self.dt            = results.dt
+		### primary and secondary distributions:
+		self.z0            = results.z0
+		self.z1            = results.z1
+		### user-selected inference parameters:
+		self.coi           = results.coi
+		self.coir          = results.coir
+		self.poi           = results.poi
+		self.k             = results.k
+		### probability results:
+		self.zstar         = results.zstar
+		self.p_reject0     = results.p_reject0
+		self.p_reject1     = results.p_reject1
+		self.p1d_poi0      = results.p1d_poi0
+		self.p1d_poi1      = results.p1d_poi1
+		self.p1d_coi0      = results.p1d_coi0
+		self.p1d_coi1      = results.p1d_coi1
+		### probability results (at user-specified POIs and COIs)
+		self.p_poi0        = results.p_poi0
+		self.p_poi1        = results.p_poi1
+		self.p_coi0        = results.p_coi0
+		self.p_coi1        = results.p_coi1
+	
+	def __eq__(self, other):
+		try:
+			self.assert_equal( other )
+			return True
+		except AssertionError:
+			return False
+	
+	def __repr__(self):
+		s  = ''
+		s += '------------------------\n'
+		s += 'power1d simulation results SUMMARY\n'
+		s += '------------------------\n'
+		s += 'Simulation overview\n'
+		s += '   number of iterations = %d\n'  %self.niters
+		s += '   duration             = %.2f s\n'  %self.dt
+		s += '------------------------\n'
+		s += 'Main parameters\n'
+		s += '   alpha              = %0.5f\n' %self.alpha
+		s += '   critical test stat = %.5f\n'  %self.zstar
+		s += '------------------------\n'
+		s += 'H0 rejection probabilities (omnibus)\n'
+		s += '   Null model:    p = %.5f\n' %self.p_reject0
+		s += '   Effect model:  p = %.5f\n' %self.p_reject1
+		s += '------------------------\n'
+		if self.coi is not None:
+			s += 'H0 rejection probability (COI)\n'
+			s += '   Position   Radius   Null model   Effect model\n'
+			for (coi,r),p0,p1 in zip(self.coi, self.p_coi0, self.p_coi1):
+				s += '   %s    %s      %0.5f       %0.5f\n' %(str(coi).rjust(5, ' '), str(r).rjust(5, ' '), p0, p1)
+			s += '------------------------\n'
+		if self.poi is not None:
+			s += 'H0 rejection probability (POI)\n'
+			s += '   Position     Null model    Effect model\n'
+			for poi,p0,p1 in zip(self.poi, self.p_poi0, self.p_poi1):
+				s += '   %s        %0.5f       %0.5f\n' %(str(poi).rjust(5, ' '), p0, p1)
+			s += '------------------------\n'
+		return s
+	
+	@property
+	def niters(self):
+		return self.z0.size
+
+
+
+	def assert_equal(self, other, tol=1e-6):
+		import pytest
+		assert isinstance(other, SimulationResultsSummary)
+		assert self.z0  == pytest.approx(other.z0,  abs=tol)
+		assert self.z1  == pytest.approx(other.z1,  abs=tol)
+		assert self.p1d_poi0 == pytest.approx(other.p1d_poi0,  abs=tol)
+		assert self.p1d_poi1 == pytest.approx(other.p1d_poi1,  abs=tol)
+		assert self.p1d_coi0 == pytest.approx(other.p1d_coi0,  abs=tol)
+		assert self.p1d_coi1 == pytest.approx(other.p1d_coi1,  abs=tol)
+	
+
+	def dump(self, fpath):
+		import pickle
+		with open(fpath, 'wb') as f:
+			pickle.dump(self, f)
+
+
 
 class SimulationResults(object):
 	'''
 	A class containing **power1d** simulation results
 	including distributions and derived probabilities.
 	'''
-	def __init__(self, model0, model1, Z0, Z1, dt, two_tailed=False):
+	def __init__(self, model0, model1, Z0, Z1, dt, two_tailed=False, alpha=0.05):
 		### experimental models (for plotting only)
 		self.model0        = model0  #: the "null" experiment model  (an instance of **power1d.models.Experiment**)
 		self.model1        = model1  #: the "alternative" experiment model   (an instance of **power1d.models.Experiment**)
@@ -85,7 +177,7 @@ class SimulationResults(object):
 		self.Z1            = Z1      #: test statistic continua ("alternative" experiment)
 		self.two_tailed    = bool( two_tailed )
 		#: inference parameters:
-		self.alpha         = None    #: Type I error rate (default 0.05)
+		self.alpha         = alpha   #: Type I error rate (default 0.05)
 		self.roi           = None    #: region(s) of interest (default: whole continuum)
 		### power-relevant distribution summarizers:
 		self.zstar         = None    #: critical threshold for omnibus null (based on Z0max)
@@ -112,6 +204,14 @@ class SimulationResults(object):
 		self._init()
 
 
+	def __eq__(self, other):
+		try:
+			self.assert_equal( other )
+			return True
+		except AssertionError:
+			return False
+	
+	
 	def __repr__(self):
 		s  = ''
 		s += '------------------------\n'
@@ -147,7 +247,6 @@ class SimulationResults(object):
 
 	
 	def _init(self):
-		self.alpha      = 0.05
 		self.coir       = 3
 		self.roi        = RegionOfInterest(   np.array( [True] * self.Q )   )
 		self.k          = 1
@@ -236,7 +335,43 @@ class SimulationResults(object):
 		self._calculate_prob_coi()
 
 
+	def as_summary(self):
+		return SimulationResultsSummary( self )
+	
+	
+	def assert_equal(self, other, tol=1e-6):
+		import pytest
+		assert isinstance(other, SimulationResults)
+		assert self.model0 == other.model0
+		assert self.Z0  == pytest.approx(other.Z0,  abs=tol)
+		assert self.Z1  == pytest.approx(other.Z1,  abs=tol)
+		assert self.z0  == pytest.approx(other.z0,  abs=tol)
+		assert self.z1  == pytest.approx(other.z1,  abs=tol)
+		assert self.p1d_poi0 == pytest.approx(other.p1d_poi0,  abs=tol)
+		assert self.p1d_poi1 == pytest.approx(other.p1d_poi1,  abs=tol)
+		assert self.p1d_coi0 == pytest.approx(other.p1d_coi0,  abs=tol)
+		assert self.p1d_coi1 == pytest.approx(other.p1d_coi1,  abs=tol)
+		
+	
+	
+	def dump(self, fpath):
+		import pickle
+		with open(fpath, 'wb') as f:
+			pickle.dump(self, f)
 
+	# def dump(self, fpath, precision=3):
+	# 	from copy import deepcopy
+	# 	import pickle
+	# 	results = deepcopy( self )
+	# 	print( 'with around')
+	# 	results.Z0 = np.around(results.Z0, precision)
+	# 	results.Z1 = np.around(results.Z1, precision)
+	# 	results.z0 = np.around(results.z0, precision)
+	# 	results.z1 = np.around(results.z1, precision)
+	# 	with open(fpath, 'wb') as f:
+	# 		pickle.dump(results, f)
+	
+	
 	def plot(self, q=None):
 		'''
 		Plot simulation results.

@@ -1,6 +1,6 @@
 
 import numpy as np
-from matplotlib import pyplot
+import matplotlib.pyplot as plt
 import power1d
 
 
@@ -24,15 +24,15 @@ emodel.simulate( 50 )
 
 
 #(2) Plot:
-pyplot.close('all')
+plt.close('all')
 ### create figure:
-pyplot.figure(figsize=(4,3))
+plt.figure(figsize=(4,3))
 ### create axes:
-ax       = pyplot.axes([0.14,0.18,0.84,0.8])
+ax       = plt.axes([0.14,0.18,0.84,0.8])
 ax.plot( emodel.Z.T, color='k', lw=0.5 )
 ax.set_xlabel('Continuum position', size=12)
 ax.set_ylabel('Test statistic value', size=12)
-pyplot.show()
+plt.show()
 
 
 

@@ -62,9 +62,9 @@ time_beginning = time.time()
 from math import log
 import numpy as np
 from scipy import stats
-from matplotlib import pyplot
+import matplotlib.pyplot as plt
 import power1d
-pyplot.close('all')
+plt.close('all')
 
 
 
@@ -295,10 +295,10 @@ if figure1:
 	y2       = data['Continental']
 	y3       = data['Pacific']
 	Y        = [y0, y1, y2, y3]
-	pyplot.figure(figsize=(8,3))
+	plt.figure(figsize=(8,3))
 	### create axes:
-	ax0      = pyplot.axes([0.09,0.18,0.41,0.8])
-	ax1      = pyplot.axes([0.57,0.18,0.41,0.8])
+	ax0      = plt.axes([0.09,0.18,0.41,0.8])
+	ax1      = plt.axes([0.57,0.18,0.41,0.8])
 	AX       = [ax0,ax1]
 	### plot all data:
 	labels   = 'Arctic', 'Atlantic', 'Continental', 'Pacific'
@@ -307,12 +307,12 @@ if figure1:
 	x        = np.arange(365)
 	for y,label,c,lss in zip(Y,labels,colors,ls):
 		h    = ax0.plot(y.T, color=c, lw=0.5, ls=lss)
-		pyplot.setp(h[0], label=label)
+		plt.setp(h[0], label=label)
 		### plot mean and SD continua:
 		m,s  = y.mean(axis=0), y.std(ddof=1, axis=0)
 		ax1.plot(m, color=c, lw=3, ls=lss, label=label)
 		ax1.fill_between(x, m-s, m+s, alpha=0.5)
-	pyplot.setp(AX, ylim=(-35,25))
+	plt.setp(AX, ylim=(-35,25))
 	### legend:
 	ax1.legend(fontsize=10, loc=(0.35,0.03))
 	[ax.set_xlabel('Day', size=14) for ax in AX]
@@ -320,7 +320,7 @@ if figure1:
 	### panel labels:
 	labels   = '(a)', '(b)'
 	[ax.text(0.03, 0.91, s, size=12, transform=ax.transAxes)   for ax,s in zip(AX,labels)]
-	pyplot.show()
+	plt.show()
 
 	print('\n\n\n')
 
@@ -396,9 +396,9 @@ if figure2:
 
 
 	#(2) Plot:
-	pyplot.figure('Figure 2', figsize=(4,3))
+	plt.figure('Figure 2', figsize=(4,3))
 		### create axes:
-	ax       = pyplot.axes([0.12,0.18,0.86,0.8])
+	ax       = plt.axes([0.12,0.18,0.86,0.8])
 	ax.plot(t, 'k-', label='Test statistic continuum')
 	ax.axhline(tstar_b, color='r', ls='--', label=r'Bonferroni threshold ($\alpha$=0.05)')
 	ax.axhline(tstar,   color='g', ls='--', label=r'RFT threshold ($\alpha$=0.05)')
@@ -407,7 +407,7 @@ if figure2:
 	ax.legend(fontsize=8, loc=(0.12,0.67))
 	ax.set_xlabel('Day', size=14)
 	ax.set_ylabel('t value', size=14)
-	pyplot.show()
+	plt.show()
 	
 	print('\n\n\n')
 	
@@ -447,16 +447,16 @@ if figure3:
 
 	# (1) Plot:
 	fontname = u'DejaVu Sans'
-	fig = pyplot.figure('Figure 3', figsize=(8,2.5))
+	fig = plt.figure('Figure 3', figsize=(8,2.5))
 	### create axes:
 	axx = np.linspace(0.06,0.7,3)
 	axy = 0.19
 	axw = 0.29
 	axh = 0.78
-	AX  = [pyplot.axes([x, axy, axw, axh])  for x in axx]
+	AX  = [plt.axes([x, axy, axw, axh])  for x in axx]
 	ax0,ax1,ax2  = AX
 	[ax.set_yticklabels([])  for ax in [ax1,ax2]]
-	[pyplot.setp(ax.get_xticklabels() + ax.get_yticklabels(), size=8)  for ax in AX]
+	[plt.setp(ax.get_xticklabels() + ax.get_yticklabels(), size=8)  for ax in AX]
 	### colors and line widths:
 	cb,cn,cs = 'k', '0.4', (0.4,0.8,0.4)
 	lws      = 4
@@ -474,7 +474,7 @@ if figure3:
 	noise2.plot(ax=ax2, color=cn, lw=0.5)
 	signal2.plot(ax=ax2, color=cs, lw=lws)
 	### adjust axes:
-	pyplot.setp(AX, ylim=(-4,4))
+	plt.setp(AX, ylim=(-4,4))
 	[ax.set_xlabel('Continuum position (%)', size=11, name=fontname)  for ax in AX]
 	ax0.set_ylabel('Dependent variable', size=11, name=fontname)
 	### legend:
@@ -482,7 +482,7 @@ if figure3:
 	### panel labels:
 	labels  = 'Inflated variance', 'Non-central RFT', 'Numerical'
 	[ax.text(0.05,0.9, '(%s)  %s'%(chr(97+i),s), name=fontname, transform=ax.transAxes, size=11)  for i,(ax,s) in enumerate(zip(AX,labels))]
-	pyplot.show()
+	plt.show()
 
 	print('\n\n\n')
 
@@ -500,11 +500,11 @@ if figure4:
 	Q = 101
 	y = power1d.geom.GaussianPulse(Q,q=60,fwhm=20,amp=3.2)
 	# plot:
-	pyplot.figure('Figure 4', figsize=(4,3))
-	ax = pyplot.axes([0.12,0.18,0.86,0.8])
+	plt.figure('Figure 4', figsize=(4,3))
+	ax = plt.axes([0.12,0.18,0.86,0.8])
 	y.plot()
 	ax.set_xlabel('Continuum position')
-	pyplot.show()
+	plt.show()
 
 	print('\n\n\n')
 	
@@ -538,7 +538,7 @@ if figure5:
 	continua.append(   power1d.geom.TriangleTooth(Q, q0=20, q1=35, x0=-1, x1=2.5, dq=10)   )
 
 	#(1) Plot:
-	pyplot.figure('Figure 5', figsize=(12,6))
+	plt.figure('Figure 5', figsize=(12,6))
 	axx    = np.linspace(0.03, 0.82, 5)
 	axy    = np.linspace(0.71, 0.04, 3)
 	axw    = 0.17
@@ -547,14 +547,14 @@ if figure5:
 	AX     = []
 	for axyy in axy:
 		for axxx in axx:
-			ax = pyplot.axes( [ axxx, axyy, axw, axh ] )
+			ax = plt.axes( [ axxx, axyy, axw, axh ] )
 			c  = continua[i]
 			c.plot(ax=ax)
 			ax.text(0.05, 0.9, '%s' %c.__class__.__name__, size=13, transform=ax.transAxes, bbox=dict(facecolor='w', alpha=0.5))
 			AX.append(ax)
 			i += 1
-	pyplot.setp(AX, ylim=(-2.5,4))
-	pyplot.show()
+	plt.setp(AX, ylim=(-2.5,4))
+	plt.show()
 
 	print('\n\n\n')
 
@@ -579,9 +579,9 @@ if figure6:
 	yB = y0 * y1
 	yC = y0 ** y1
 	# plot:
-	pyplot.figure('Figure 6', figsize=(8,3))
-	ax0      = pyplot.axes([0.09,0.18,0.41,0.8])
-	ax1      = pyplot.axes([0.57,0.18,0.41,0.8])
+	plt.figure('Figure 6', figsize=(8,3))
+	ax0      = plt.axes([0.09,0.18,0.41,0.8])
+	ax1      = plt.axes([0.57,0.18,0.41,0.8])
 	AX       = [ax0,ax1]
 	y0.plot(ax=ax0, color='b', label='y0')
 	y1.plot(ax=ax0, color='g', label='y1')
@@ -596,7 +596,7 @@ if figure6:
 	[ax.set_xlabel('Continuum position', size=12) for ax in AX]
 	labels   = '(a)', '(b)'
 	[ax.text(0.03, 0.91, s, size=12, transform=ax.transAxes)   for ax,s in zip(AX,labels)]
-	pyplot.show()
+	plt.show()
 	
 	print('\n\n\n')
 	
@@ -618,19 +618,19 @@ if figure7:
 	noise1 = power1d.noise.SmoothGaussian( J, Q , mu = 0 , sigma = 1 , fwhm = 20 , pad = True )
 
 	# plot:
-	pyplot.figure('Figure 7', figsize=(8,3))
+	plt.figure('Figure 7', figsize=(8,3))
 	### create axes:
-	ax0      = pyplot.axes([0.09,0.18,0.41,0.8])
-	ax1      = pyplot.axes([0.57,0.18,0.41,0.8])
+	ax0      = plt.axes([0.09,0.18,0.41,0.8])
+	ax1      = plt.axes([0.57,0.18,0.41,0.8])
 	AX       = [ax0,ax1]
 	### plot:
 	noise0.plot(ax=ax0, color='k', lw=0.5)
 	noise1.plot(ax=ax1, color='k', lw=0.5)
-	pyplot.setp(AX, ylim=(-3.5, 3.5))
+	plt.setp(AX, ylim=(-3.5, 3.5))
 	[ax.set_xlabel('Continuum position', size=12)  for ax in AX]
 	labels   = '(a)', '(b)'
 	[ax.text(0.03, 0.91, s, size=12, transform=ax.transAxes)   for ax,s in zip(AX,labels)]
-	pyplot.show()
+	plt.show()
 	
 	print('\n\n\n')
 	
@@ -676,7 +676,7 @@ if figure8:
 
 
 	#(1) Plot:
-	pyplot.figure('Figure 8', figsize=(12,6))
+	plt.figure('Figure 8', figsize=(12,6))
 	axx    = np.linspace(0.03, 0.82, 5)
 	axy    = np.linspace(0.71, 0.04, 3)
 	axw    = 0.17
@@ -691,13 +691,13 @@ if figure8:
 			if ind not in IND:
 				continue
 			i   += 1
-			ax = pyplot.axes( [ axxx, axyy, axw, axh ] )
+			ax = plt.axes( [ axxx, axyy, axw, axh ] )
 			c  = noise[i]
 			c.plot(ax=ax, color='k', lw=0.5)
 			ax.text(0.05, 0.9, '%s' %c.__class__.__name__, size=13, transform=ax.transAxes, bbox=dict(facecolor='w', alpha=0.5))
 			AX.append(ax)
-	pyplot.setp(AX, ylim=(-3,5))
-	pyplot.show()
+	plt.setp(AX, ylim=(-3,5))
+	plt.show()
 	
 	print('\n\n\n')
 
@@ -723,20 +723,20 @@ if figure9:
 	model    = power1d.models.DataSample( baseline , signal , noise)
 
 	# plot:
-	pyplot.figure('Figure 9', figsize=(8,3))
+	plt.figure('Figure 9', figsize=(8,3))
 	### create axes:
-	ax0      = pyplot.axes([0.09,0.18,0.41,0.8])
-	ax1      = pyplot.axes([0.57,0.18,0.41,0.8])
+	ax0      = plt.axes([0.09,0.18,0.41,0.8])
+	ax1      = plt.axes([0.57,0.18,0.41,0.8])
 	AX       = [ax0,ax1]
 	### plot:
 	model.plot( ax = ax0 )
 	model.random( )
 	model.plot( ax = ax1 )
-	pyplot.setp(AX, ylim=(-2.5, 9.5))
+	plt.setp(AX, ylim=(-2.5, 9.5))
 	[ax.set_xlabel('Continuum position', size=12)  for ax in AX]
 	labels   = '(a)', '(b)'
 	[ax.text(0.03, 0.91, s, size=12, transform=ax.transAxes)   for ax,s in zip(AX,labels)]
-	pyplot.show()
+	plt.show()
 	
 	print('\n\n\n')
 
@@ -766,20 +766,20 @@ if figure10:
 	model    = power1d.models.DataSample( baseline , signal , noise , J = J)
 
 	# plot:
-	pyplot.figure('Figure 10', figsize=(8,3))
+	plt.figure('Figure 10', figsize=(8,3))
 	### create axes:
-	ax0      = pyplot.axes([0.09,0.18,0.41,0.8])
-	ax1      = pyplot.axes([0.57,0.18,0.41,0.8])
+	ax0      = plt.axes([0.09,0.18,0.41,0.8])
+	ax1      = plt.axes([0.57,0.18,0.41,0.8])
 	AX       = [ax0,ax1]
 	### plot:
 	model.plot( ax = ax0 )
 	model.random( )
 	model.plot( ax = ax1 )
-	# pyplot.setp(AX, ylim=(-2.5, 9.5))
+	# plt.setp(AX, ylim=(-2.5, 9.5))
 	[ax.set_xlabel('Continuum position', size=12)  for ax in AX]
 	labels   = '(a)', '(b)'
 	[ax.text(0.03, 0.91, s, size=12, transform=ax.transAxes)   for ax,s in zip(AX,labels)]
-	pyplot.show()
+	plt.show()
 	
 	print('\n\n\n')
 
@@ -807,13 +807,13 @@ if figure11:
 	emodel.simulate( 50 )
 
 	# plot:
-	pyplot.figure('Figure 11', figsize=(4,3))
+	plt.figure('Figure 11', figsize=(4,3))
 	### create axes:
-	ax       = pyplot.axes([0.14,0.18,0.84,0.8])
+	ax       = plt.axes([0.14,0.18,0.84,0.8])
 	ax.plot( emodel.Z.T, color='k', lw=0.5 )
 	ax.set_xlabel('Continuum position', size=12)
 	ax.set_ylabel('Test statistic value', size=12)
-	pyplot.show()
+	plt.show()
 	
 	print('\n\n\n')
 	
@@ -850,9 +850,9 @@ if figure12:
 	results   = sim.simulate(1000, progress_bar=True)
 	print('\n\n\n')
 	# plot:
-	pyplot.figure('Figure 12', figsize=(8,6))
+	plt.figure('Figure 12', figsize=(8,6))
 	results.plot()
-	pyplot.show()
+	plt.show()
 	
 	print('\n\n\n')
 
@@ -893,9 +893,9 @@ if figure13:
 	roi[150:250] = True
 	results.set_roi( roi )
 	# plot:
-	pyplot.figure('Figure 13', figsize=(8,6))
+	plt.figure('Figure 13', figsize=(8,6))
 	results.plot()
-	pyplot.show()
+	plt.show()
 	
 	print('\n\n\n')
 
@@ -949,9 +949,9 @@ if figure14:
 
 
 	#(2) Plot:
-	pyplot.figure('Figure 14', figsize=(4,3))
+	plt.figure('Figure 14', figsize=(4,3))
 	### create axes:
-	ax       = pyplot.axes([0.14,0.18,0.84,0.8])
+	ax       = plt.axes([0.14,0.18,0.84,0.8])
 	colors   = 'b', 'g', 'r'
 	for c,P0,P1,J in zip( colors, PP0, PP1 , JJ ):
 		ax.plot( effects , P0 , '-', color=c , label='J = %d' %J )
@@ -959,7 +959,7 @@ if figure14:
 		ax.set_xlabel('Effect size', size=12)
 		ax.set_ylabel('Power', size=12)
 	ax.legend()
-	pyplot.show()
+	plt.show()
 	
 	print('\n\n\n')
 
@@ -1029,13 +1029,13 @@ if figure15:
 	PP0,PP1 = np.array(PP0), np.array(PP1)
 
 	#(2) Plot:
-	pyplot.figure('Figure 15', figsize=(12,3))
+	plt.figure('Figure 15', figsize=(12,3))
 	### create axes:
 	axx    = np.linspace(0.05, 0.71, 3)
 	axy    = 0.16
 	axw    = 0.28
 	axh    = 0.83
-	AX     = [pyplot.axes([x,axy,axw,axh])  for x in axx]
+	AX     = [plt.axes([x,axy,axw,axh])  for x in axx]
 	ax0,ax1,ax2 = AX
 	colors   = 'b', 'g', 'r'
 	for ax,W,P0,P1 in zip(AX,WW0,PP0,PP1):
@@ -1045,10 +1045,10 @@ if figure15:
 			ax.set_xlabel(r'Effect size  ($\sigma$)', size=12)
 	ax0.set_ylabel('Power', size=12)
 	ax0.legend( loc=(0.01,0.5) )
-	pyplot.setp(AX, ylim=(0, 0.75))
+	plt.setp(AX, ylim=(0, 0.75))
 	### panel labels:
 	[ax.text(0.05, 0.9, '(%s)  FWHM = %d'%(chr(97+i), W), transform=ax.transAxes, size=12)  for i,(ax,W) in enumerate( zip(AX,WW0) ) ]
-	pyplot.show()
+	plt.show()
 	
 	print('\n\n\n')
 
@@ -1109,13 +1109,13 @@ if figure16:
 
 
 	#(2) Plot:
-	pyplot.figure('Figure 16', figsize=(12,3))
+	plt.figure('Figure 16', figsize=(12,3))
 	### create axes:
 	axx    = np.linspace(0.05, 0.71, 3)
 	axy    = 0.16
 	axw    = 0.28
 	axh    = 0.83
-	AX     = [pyplot.axes([x,axy,axw,axh])  for x in axx]
+	AX     = [plt.axes([x,axy,axw,axh])  for x in axx]
 	ax0,ax1,ax2 = AX
 	colors   = 'b', 'g', 'r'
 	for ax,W,P0,P1 in zip(AX,WW,PP0,PP1):
@@ -1125,10 +1125,10 @@ if figure16:
 			ax.set_xlabel('Effect size', size=12)
 	ax0.set_ylabel('Power', size=12)
 	ax0.legend( loc=(0.01,0.5) )
-	pyplot.setp(AX, ylim=(0.1, 1.1))
+	plt.setp(AX, ylim=(0.1, 1.1))
 	### panel labels:
 	[ax.text(0.05, 0.9, '(%s)  FWHM = %d'%(chr(97+i), W), transform=ax.transAxes, size=12)  for i,(ax,W) in enumerate( zip(AX,WW) ) ]
-	pyplot.show()
+	plt.show()
 	
 	print('\n\n\n')
 	

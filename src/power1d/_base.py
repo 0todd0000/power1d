@@ -9,7 +9,6 @@ Copyright (C) 2023  Todd Pataky
 
 
 import inspect
-from copy import deepcopy
 import numpy as np
 from . _plot import DataPlotter
 
@@ -24,6 +23,13 @@ class _Power1DObject(object):
 
 
 class _ContniuumObject(_Power1DObject):
+	
+	def __eq__(self, other):
+		try:
+			self.assert_equal( other )
+			return True
+		except AssertionError:
+			return False
 	
 	def _assert_J(self, J):
 		self._assert_integer(  dict(J=J)  )
@@ -199,8 +205,19 @@ class _ContniuumObject(_Power1DObject):
 	def _error_prefix(self, varname):
 		return '\n-----power1d error-----\nClass: "%s"\nInput argument "%s" ' %(self.__class__.__name__, varname)
 	
+	
+	def assert_equal(self, other, tol=1e-6):
+		import pytest
+		assert self.value  == pytest.approx(other.value,  abs=tol)
+	
 	def copy(self):
+		from copy import deepcopy
 		return deepcopy(self)
+	
+	def dump(self, fpath):
+		import pickle
+		with open(fpath, 'wb') as f:
+			pickle.dump(self, f)
 	
 	def plot(self, ax=None, q=None, *args, **kwdargs):
 		plotter = DataPlotter(ax)
@@ -255,19 +272,52 @@ class _Continuum1D(_ContniuumObject):
 		new.value = self.value - other.value
 		return new
 
+	def _build(self):
+		self.value  = np.zeros(self.Q)   #build a null signal by default
+
+	def assert_equal(self, other, tol=1e-6):
+		import pytest
+		assert isinstance(other, _Continuum1D)
+		assert self.Q == other.Q
+		assert self.value  == pytest.approx(other.value,  abs=tol)
+	
+	# def dump(self, fpath):
+	# 	import pickle
+	# 	with open(fpath, 'wb') as f:
+	# 		pickle.dump(self, f)
+
+	# def dump(self, fpath):
+	# 	from gzip import GzipFile
+	# 	import pickle
+	# 	with GzipFile(fpath, 'wb') as f:
+	# 		pickle.dump(self, f)
+	
+	
+	
 	def fliplr(self):
 		self.value = self.value[-1::-1]
 	def flipud(self, datum=0):
 		self.value = -(self.value-datum) + datum
 
 
-	def _build(self):
-		self.value  = np.zeros(self.Q)   #build a null signal by default
-	
 	def plot(self, ax=None, q=None, *args, **kwdargs):
 		plotter = DataPlotter(ax)
 		plotter.plot( q, self.value, *args, **kwdargs )
-	
+		
+		
+	def save(self, fpath):
+		from gzip import GzipFile
+		with GzipFile( fpath, 'w') as f:
+			np.save(file=f, arr=self.value)
+
+	def set_attr(self, attr, value):
+		setattr(self, attr, value)
+		self._build()
+
+	def set_attrs(self, **kwargs):
+		for attr,value in kwargs.items():
+			setattr(self, attr, value)
+		self._build()
 
 
 class DerivedContinuum1D(_Continuum1D):
@@ -282,7 +332,7 @@ class DerivedContinuum1D(_Continuum1D):
 	'''
 	def __init__(self, value):
 		self._assert_array1d( dict(value=value) )
-		super(DerivedContinuum1D, self).__init__(value.size)
+		super().__init__(value.size)
 		self.value = value
 
 
@@ -299,6 +349,14 @@ class Sample1D(_ContniuumObject):
 		self.value  = None         #continuum (to be built)
 		# self._build()              #build the continuum using self.params
 
+	def assert_equal(self, other, tol=1e-6):
+		import pytest
+		assert isinstance(other, Sample1D)
+		assert self.J == other.J
+		assert self.Q == other.Q
+		assert self.value  == pytest.approx(other.value,  abs=tol)
+	
+	
 	def plot(self, ax=None, q=None, *args, **kwdargs):
 		plotter = DataPlotter(ax)
 		plotter.plot( q, self.value.T, *args, **kwdargs )

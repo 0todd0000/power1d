@@ -2,10 +2,8 @@
 High-level classes for assembling data models and simulating experiments.
 '''
 
+# Copyright (C) 2023  Todd Pataky
 
-
-# Copyright (C) 2017  Todd Pataky
-# version: 0.1 (2017/04/01)
 
 
 from copy import deepcopy
@@ -20,6 +18,57 @@ from . noise import _Noise
 from . results import SimulationResults
 
 
+
+
+def datasample_from_array( y ):
+	'''
+	Convenience function for creating a data sample from
+	a set of of 1D observations.
+	
+	The input array must have a shape (J,Q) where:
+	
+		J = number of observations
+		
+		Q = number of continuum nodes
+	
+	WARNING! "datasample_from_array" uses a relatively simple
+	SmoothGaussian noise model, and this may NOT embody all
+	features of real, experimental noise. In this case more
+	complex noise modeling (e.g. Additive, Mixture) may
+	be required. Refer to the noise module for more details.
+	
+	.. plot::
+		:include-source:
+
+		import numpy as np
+		import matplotlib.pyplot as plt
+		import power1d
+
+		y        = power1d.data.weather()['Atlantic']
+		model    = power1d.models.datasample_from_array( y )
+
+		plt.close('all')
+		fig,axs = plt.subplots(1, 3, figsize=(10,3), tight_layout=True)
+		axs[0].plot( y.T )
+		np.random.seed(0)
+		model.random()
+		model.plot( ax=axs[1])
+		model.random()
+		model.plot( ax=axs[2] )
+		labels  = 'Original data', 'DataSample model', 'DataSample model (new noise)'
+		[ax.set_title(s) for ax,s in zip(axs,labels)]
+		plt.show()
+	'''
+	from . import geom
+	from . noise import from_residuals
+	J,Q      = y.shape
+	m        = y.mean( axis=0 )
+	r        = y - m
+	baseline = geom.Continuum1D( m )
+	signal   = geom.Null( Q=Q )
+	noise    = from_residuals( r )
+	model    = DataSample(baseline, signal, noise, J=J)
+	return model
 
 
 
@@ -70,7 +119,7 @@ class DataSample(_Noise):
 	.. plot::
 		:include-source:
 
-		from matplotlib import pyplot
+		import matplotlib.pyplot as plt
 		import power1d
 
 		J        = 20
@@ -79,7 +128,7 @@ class DataSample(_Noise):
 		signal   = power1d.geom.GaussianPulse( Q=Q, q=40, fwhm=15, amp=3.5 )
 		noise    = power1d.noise.SmoothGaussian( J=J, Q=Q, mu=0, sigma=1.0, fwhm=20 )
 		model    = power1d.models.DataSample(baseline, signal, noise, J=J)
-		pyplot.close('all')
+		plt.close('all')
 		model.plot(color="g", lw=5)
 	'''
 	def __init__(self, baseline, signal, noise, J=8, regressor=None):
@@ -89,8 +138,7 @@ class DataSample(_Noise):
 		self.baseline     = None     #: baseline model
 		self.noise        = None     #: noise model
 		self.signal       = None     #: signal model
-		self.value0       = None     #: value in the absence of noise (baseline + signal)
-		self.hasregressor = False    #: whether or not a regressor has been associated with the data sample
+		# self.value0       = None     #: value in the absence of noise (baseline + signal)
 		self.regressor    = None     #: (J,) numpy array representing regressor
 		### construct instance:
 		self.set_baseline(baseline)
@@ -98,10 +146,24 @@ class DataSample(_Noise):
 		self.set_noise(noise)
 		self.set_sample_size(J)
 		self.set_regressor(regressor)
-		super(DataSample, self).__init__(J, baseline.Q)
+		super().__init__(J, baseline.Q)
 		self.random()
 
 
+	@property
+	def hasregressor(self):
+		return self.regressor is not None
+		
+	@property
+	def value0(self):  # value in the absence of noise (baseline + signal)
+		if self.baseline is None:
+			return None
+		elif self.signal is None:
+			return self.baseline.value
+		else:
+			return self.baseline.value + self.signal.value
+		
+	
 	def _random(self, subtract_baseline=False):
 		self.noise.random()
 		if self.hasregressor:
@@ -141,7 +203,7 @@ class DataSample(_Noise):
 		Link noise to another DataSample object so that the linked object's
 		noise is equivalent to master object's noise.
 		'''
-		super(DataSample, self).link(other)
+		super().link(other)
 		self.noise.link(other.noise)
 
 
@@ -167,7 +229,7 @@ class DataSample(_Noise):
 		.. plot::
 			:include-source:
 
-			from matplotlib import pyplot
+			import matplotlib.pyplot as plt
 			import power1d
 
 			J        = 8
@@ -176,7 +238,7 @@ class DataSample(_Noise):
 			signal   = power1d.geom.GaussianPulse( Q=Q, q=75, fwhm=15, amp=5.0 )
 			noise    = power1d.noise.Gaussian( J=J, Q=Q, mu=0, sigma=1.0 )
 			model    = power1d.models.DataSample(baseline, signal, noise, J=J)
-			pyplot.close('all')
+			plt.close('all')
 			model.plot(color="b", lw=5)
 		'''
 		plotter = DataPlotter(ax)
@@ -217,7 +279,7 @@ class DataSample(_Noise):
 			assert baseline.Q == self.noise.Q, 'Baseline and noise must be the same length (baseline: Q=%d, noise: Q=%d).' %(baseline.Q, noise.Q)
 		self.baseline = baseline
 		self.Q        = baseline.Q
-		self.value0   = baseline.value
+		# self.value0   = baseline.value
 		
 	def set_noise(self, noise):
 		'''
@@ -240,12 +302,13 @@ class DataSample(_Noise):
 
 		*x* ---- a length-J numpy array (float)
 		'''
-		if x is None:
-			self.hasregressor = False
-			self.regressor    = None
-		else:
-			self.hasregressor = True
-			self.regressor    = x
+		# if x is None:
+		# 	self.hasregressor = False
+		# 	self.regressor    = None
+		# else:
+		# 	self.hasregressor = True
+		# 	self.regressor    = x
+		self.regressor  = x
 			
 	
 	def set_sample_size(self, J):
@@ -256,7 +319,7 @@ class DataSample(_Noise):
 
 		*J* ---- sample size (positive int)
 		'''
-		super(DataSample, self).set_sample_size(J)
+		super().set_sample_size(J)
 		assert (J >= 3) and (J<=100), 'Sample size (J) must be an integer in the range: (3, 100)'
 		self.noise.set_sample_size(J)
 		
@@ -275,7 +338,7 @@ class DataSample(_Noise):
 		self._assert_instance( dict(signal=signal), [_Continuum1D])
 		assert signal.Q == self.baseline.Q, 'Baseline and signal must be the same length (baseline: Q=%d, signal: Q=%d).' %(self.baseline.Q, signal.Q)
 		self.signal   = signal
-		self.value0   = self.baseline.value + self.signal.value
+		# self.value0   = self.baseline.value + self.signal.value
 		# if self.hasregressor:
 		# 	svalue       = [x * self.signal.value  for x in self.regressor]
 		# 	self.value0r = np.array( svalue )
@@ -304,7 +367,7 @@ class Experiment(object):
 	.. plot::
 		:include-source:
 
-		from matplotlib import pyplot
+		import matplotlib.pyplot as plt
 		import power1d
 
 		J        = 10
@@ -316,7 +379,7 @@ class Experiment(object):
 		model0   = power1d.models.DataSample(baseline, signal0, noise, J=J)
 		model1   = power1d.models.DataSample(baseline, signal1, noise, J=J)
 		emodel   = power1d.models.Experiment( [model0, model1], fn=power1d.stats.t_2sample )
-		pyplot.close('all')
+		plt.close('all')
 		emodel.plot()
 	'''
 	def __init__(self, data_sample_models, fn):
@@ -340,11 +403,11 @@ class Experiment(object):
 			raise( ValueError('"fn" exited with errors.  It must accept data_model.value as its input argument and return an array with length Q')  )
 		### check function output size:
 		y   = fn( *values )
-		assert isinstance(y, np.ndarray), '"fn" must return a NumPy array.'
-		assert y.ndim==1, '"fn" must return a one-dimensional NumPy array.'
-		assert y.size==Q, '"fn" must return a NumPy array of length Q.'
+		assert isinstance(y, np.ndarray), '"fn" must return a numpy array.'
+		assert y.ndim==1, '"fn" must return a one-dimensional numpy array.'
+		assert y.size==Q, '"fn" must return a numpy array of length Q.'
 		### set attributes:
-		self.Q           = Q              #:continuum length
+		self.Q           = Q              #: continuum length
 		self.data_models = dmodels        #: data models
 		self.nmodels     = len(dmodels)   #: number of data models
 		self.fn          = fn             #: test statistic function
@@ -353,6 +416,23 @@ class Experiment(object):
 		self.data_models = [m.copy() for m in self.data_models]
 
 
+	def __eq__(self, other):
+		try:
+			self.assert_equal( other )
+			return True
+		except AssertionError:
+			return False
+	
+	
+	def assert_equal(self, other, tol=1e-6):
+		import pytest
+		assert isinstance(other, Experiment)
+		assert self.Q == other.Q
+		for dmodel,dmodel0 in zip(self.data_models, other.data_models):
+			assert dmodel == dmodel0
+		# assert self.Z0  == pytest.approx(other.value,  abs=tol)
+	
+	
 	def plot(self, ax=None, with_noise=True, colors=None, q=None):
 		'''
 		Plot an instantaneous representation of the Experiment model.
@@ -374,7 +454,7 @@ class Experiment(object):
 			:include-source:
 
 			import numpy as np
-			from matplotlib import pyplot
+			import matplotlib.pyplot as plt
 			import power1d
 
 			J        = 8
@@ -386,7 +466,7 @@ class Experiment(object):
 			model0   = power1d.models.DataSample(baseline, signal0, noise, J=J)
 			model1   = power1d.models.DataSample(baseline, signal1, noise, J=J)
 			emodel   = power1d.models.Experiment( [model0, model1], fn=power1d.stats.t_2sample )
-			pyplot.close('all')
+			plt.close('all')
 			emodel.plot( colors=("k", "r"), q=np.linspace(0, 1, Q) )
 		'''
 		if colors is None:
@@ -429,7 +509,7 @@ class Experiment(object):
 			:include-source:
 
 			import numpy as np
-			from matplotlib import pyplot
+			import matplotlib.pyplot as plt
 			import power1d
 
 			J        = 8
@@ -443,9 +523,9 @@ class Experiment(object):
 			emodel   = power1d.models.Experiment( [model0, model1], fn=power1d.stats.t_2sample )
 			
 			emodel.simulate(iterations=50, progress_bar=True)
-			pyplot.close('all')
-			pyplot.plot( emodel.Z.T, color='k', lw=0.5 )
-			pyplot.title('Test statistic continua')
+			plt.close('all')
+			plt.plot( emodel.Z.T, color='k', lw=0.5 )
+			plt.title('Test statistic continua')
 		'''
 		_msg             = 'iterations must be an integer between 10 and 100,000'
 		assert isinstance(iterations, int), _msg
@@ -539,7 +619,7 @@ class ExperimentSimulator(object):
 			:include-source:
 
 			import numpy as np
-			from matplotlib import pyplot
+			import matplotlib.pyplot as plt
 			import power1d
 
 			J        = 8
@@ -565,7 +645,7 @@ class ExperimentSimulator(object):
 			#Then the results can be re-loaded:
 			fname         = "/tmp/results.npz"
 			saved_results = sim.load_simulation_results( fname )
-			pyplot.close('all')
+			plt.close('all')
 			saved_results.plot()
 		'''
 		with np.load(filename) as D:
@@ -573,6 +653,64 @@ class ExperimentSimulator(object):
 		return SimulationResults( self.model0, self.model1, Z0, Z1, dt )
 
 
+	def sample_size(self, power=0.8, alpha=0.05, niter0=200, niter=1000, coi=None):
+		'''
+		Estimate sample size required to achieve a target power.
+		
+		When *coi* is None the omnibus power is used.
+		When *coi* is a dictionary then the COI power is used, e.g. :code:`coi=dict(q=65, r=3)`
+
+		Arguments:
+		
+		*power* ---- target power (default: 0.8, range: [0,1])
+		
+		*alpha* ---- Type I error rate (default: 0.05, range: [0,1])
+		
+		*niter0* ---- Number of iterations for initial, approximate solution (default: 200, range: [200,])
+		
+		*niter* ---- Number of iterations for final solution (default: 1000, range: [1000,])
+		
+		*coi* ---- Center-of-interest (default: None;  either None or dict(q=q, r=r)  where q is the COI and r is its radius; e.g. coi=dict(q=65, r=3))
+		
+		Outputs:
+		
+		Dictionary containing:
+		
+		*nstar* ---- estimated sample size required to achieve the target power
+		
+		*n* --- array of sample sizes used for the final power calculation
+		
+		*p* --- array of final power values
+		'''
+		def sim_single(n, niter=200):
+			self.model0.set_sample_size( n )
+			self.model1.set_sample_size( n )
+			results = self.simulate( niter, progress_bar=False )
+			results.set_alpha( alpha )
+			if coi is None:
+				p   = results.p_reject1
+			else:
+				results.set_coi( (coi['q'], coi['r']) )
+				p   = results.p_coi1[0]
+			return p
+		# approximate solution:
+		n,p         = 3, 0
+		data_approx = []
+		while True:
+			p       = sim_single(n, niter=niter0)
+			data_approx.append( (n,  p) )
+			if p > power:
+				break
+			else:
+				n  += 1
+		# finer detail in area of approximate solution:
+		ns    = list( range( n-3, n+3 ) )
+		ps    = np.array(  [sim_single( nn, niter=niter )  for nn in ns]  )
+		ind   = np.argwhere( ps > power ).ravel()[0]
+		nstar = ns[ind]
+		return dict(nstar=nstar, n=np.array(ns), p=ps, target_power=power, alpha=alpha, coi=coi)
+	
+	
 	def simulate(self, iterations=50, progress_bar=True, two_tailed=False):
 		'''
 		Iteratively simulate a number of experiments.
@@ -599,7 +737,7 @@ class ExperimentSimulator(object):
 			:include-source:
 
 			import numpy as np
-			from matplotlib import pyplot
+			import matplotlib.pyplot as plt
 			import power1d
 
 			J        = 8
@@ -617,7 +755,7 @@ class ExperimentSimulator(object):
 			sim      = power1d.models.ExperimentSimulator(emodel0, emodel1)
 			results  = sim.simulate(iterations=200, progress_bar=True)
 			
-			pyplot.close('all')
+			plt.close('all')
 			results.plot()
 		'''
 		_msg          = 'iterations must be an integer greater than or equal to 50'

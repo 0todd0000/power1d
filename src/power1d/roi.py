@@ -9,7 +9,7 @@ Example:
 	:include-source:
 
 	import numpy as np
-	from matplotlib import pyplot
+	import matplotlib.pyplot as plt
 	import power1d
 
 	
@@ -43,7 +43,7 @@ Example:
 
 
 	# plot:
-	pyplot.close('all')
+	plt.close('all')
 	results.plot()
 
 
@@ -54,8 +54,8 @@ the ROI contains no signal. Simulating for a larger number of iterations \
 will yield more precise convergence to alpha.
 '''
 
-# Copyright (C) 2017  Todd Pataky
-# version: 0.1 (2017/04/01)
+# Copyright (C) 2023  Todd Pataky
+
 
 import numpy as np
 from scipy.ndimage import label as scipy_label
@@ -75,7 +75,7 @@ class RegionOfInterest(_Continuum1D):
 		:include-source:
 	
 		import numpy as np
-		from matplotlib import pyplot
+		import matplotlib.pyplot as plt
 		import power1d
 		
 		Q        = 101
@@ -83,7 +83,7 @@ class RegionOfInterest(_Continuum1D):
 		x[40:60] = True
 		roi      = power1d.roi.RegionOfInterest(x)
 
-		pyplot.close('all')
+		plt.close('all')
 		roi.plot()
 	'''
 	
@@ -91,13 +91,13 @@ class RegionOfInterest(_Continuum1D):
 		try:
 			x       = np.array(x)
 		except:
-			raise ValueError('Input to RegionOfInterest must be a list or a NumPy array')
+			raise ValueError('Input to RegionOfInterest must be a list or a numpy array')
 		assert x.ndim==1, 'Input to RegionOfInterest must be a one-dimensional array'
 		assert issubclass(x.dtype.type, np.bool_), 'Input to RegionOfInterest must only True and False values'
 		assert x.sum()>0, 'Input to RegionOfInterest must contain at least one True value'
 		Q       = x.size
 		self.params = dict(x=x)
-		super(RegionOfInterest, self).__init__(Q)
+		super().__init__(Q)
 
 	def _build(self):
 		self.value  = self.params['x']

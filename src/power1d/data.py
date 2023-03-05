@@ -6,8 +6,8 @@ Currently only one dataset is available:
 "weather"
 '''
 
-# Copyright (C) 2017  Todd Pataky
-# version: 0.1 (2017/04/01)
+# Copyright (C) 2023  Todd Pataky
+
 
 import os
 import numpy as np
@@ -21,7 +21,7 @@ def weather():
 	| on 28 March 2017 (see the ./examples/weather directory).
 
 	The data have been converted from the original form in
-	the "daily.mat" file to NumPy format and saved in
+	the "daily.mat" file to numpy format and saved in
 	./power1d/data/weather/daily.npz
 	
 	This is a convenience function for loading those data.
@@ -47,12 +47,12 @@ def weather():
 	.. plot::
 		:include-source:
 
-		from matplotlib import pyplot
+		import matplotlib.pyplot as plt
 		import power1d
 
 		data = power1d.data.weather()   #load data dictionary
 		y    = data['Continental']   #extract one region
-		pyplot.plot(y.T, color="k")
+		plt.plot(y.T, color="k")
 	'''
 	dir0     = os.path.dirname(__file__)
 	fname    = os.path.join(dir0, 'data', 'weather', 'daily.npz')

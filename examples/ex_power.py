@@ -1,6 +1,6 @@
 
 import numpy as np
-from matplotlib import pyplot
+import matplotlib.pyplot as plt
 import power1d
 
 import time
@@ -31,11 +31,10 @@ results   = sim.simulate(10000, progress_bar=True)
 
 
 #(2) Plot:
-pyplot.close('all')
-pyplot.figure(figsize=(8,6))
-### create axes:
+plt.close('all')
+plt.figure(figsize=(8,6))
 results.plot()
-pyplot.show()
+plt.show()
 
 
 

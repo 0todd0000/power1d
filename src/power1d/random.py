@@ -20,8 +20,8 @@ Pataky TC (2016) RFT1D: Smooth One-Dimensional Random Field Upcrossing Probabili
 **Journal of Statistical Software** 71(7), 1-22. http://doi.org/10.18637/jss.v071.i07
 '''
 
-# Copyright (C) 2017  Todd Pataky
-# version: 0.1 (2017/04/01)
+# Copyright (C) 2023  Todd Pataky
+
 
 
 from math import sqrt,log
@@ -62,17 +62,17 @@ class Generator1D(object):
 	'''
 	
 	def __init__(self, nResponses=1, nodes=101, FWHM=10, pad=False):
-		super(Generator1D, self).__init__()
+		super().__init__()
 		self.FWHM          = float(FWHM)
-		self.SCALE         = None    #scale factor to return smoothed data to unit variance
-		self.SD            = None    #standard deviation of the Gaussian kernel
-		self.i0            = None    #first node, post-smoothed data
-		self.i1            = None    #last node, post-smoothed data (i1-i0 = nodes)
+		self.SCALE         = None    # scale factor to return smoothed data to unit variance
+		self.SD            = None    # standard deviation of the Gaussian kernel
+		self.i0            = None    # first node, post-smoothed data
+		self.i1            = None    # last node, post-smoothed data (i1-i0 = nodes)
 		self.mask          = None
 		self.nResponses    = int(nResponses)
 		self.nNodes        = None
 		self.pad           = bool(pad)
-		self.q             = None    #number of nodes used for pre-smoothed data
+		self.q             = None    # number of nodes used for pre-smoothed data
 		self._parse_nodes_argument(nodes)
 		self.shape         = self.nResponses, self.nNodes
 		self.set_fwhm(self.FWHM)
@@ -195,7 +195,7 @@ class GeneratorMulti1D(Generator1D):
 	'''
 	
 	def __init__(self, nResponses=1, nodes=101, nComponents=2, FWHM=10, W=None, pad=False):
-		super(GeneratorMulti1D, self).__init__(nResponses, nodes, FWHM, pad)
+		super().__init__(nResponses, nodes, FWHM, pad)
 		self.nComponents   = int(nComponents)
 		if W is None:
 			self.W         = np.eye(self.nComponents)

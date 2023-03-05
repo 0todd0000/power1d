@@ -14,9 +14,11 @@ def power_1sample(n, effect, alpha=0.05):
 	return stats.nct.sf( u , n-1 , delta )
 
 
-def sample_size_1sample(effect, alpha=0.05, target_power=0.8, n_range=(3,50)):
+def sample_size_1sample(effect, alpha=0.05, target_power=0.8, n_range=(5,50)):
 	'''
 	Adjust n_range to a broader sample size range if necessary
+	
+	Note that stats.nct.sf does not handle n<5 well
 	'''
 	n   = np.arange( *n_range )
 	p   = np.array([power_1sample(nn, effect, alpha) for nn in n])

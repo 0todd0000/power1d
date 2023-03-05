@@ -1,6 +1,6 @@
 
 from scipy import stats
-from matplotlib import pyplot
+import matplotlib.pyplot as plt
 
 
 
@@ -38,15 +38,15 @@ while p < power:
 
 
 #(2) Plot results:
-pyplot.close('all')
-pyplot.figure( figsize=(6,4) )
-ax = pyplot.axes([0.15,0.15,0.8,0.8])
+plt.close('all')
+plt.figure( figsize=(6,4) )
+ax = plt.axes([0.15,0.15,0.8,0.8])
 ax.plot(JJ, PP, 'o-', label='Actual power')
 ax.axhline(power, color='k', ls='--', label='Target power')
 ax.set_xlabel('Sample size', size=12)
 ax.set_ylabel('Power', size=12)
 ax.legend()
-pyplot.show()
+plt.show()
 
 
 

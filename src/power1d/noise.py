@@ -16,9 +16,112 @@ from . _base import Sample1D, _Continuum1D
 # from . signals import _Signal,Signal
 from . geom import Continuum1D
 from . random import Generator1D
+from . _assert import _assert_spm1d
 
 
 
+def from_array(noise, x):
+	'''
+	Create Scaled noise object from a 1D array.
+	
+	This function is equivalent to creating a Scaled noise object.
+	
+	While redundant this function is included for API consistency,
+	as a sister-function to geom.from_array and
+	models.datasample_from_array
+	
+	Arguments:
+
+	*noise* ---- a Noise object
+	
+	*x* ---- scaling array (1D numpy array)
+
+	Outputs:
+	
+	*obj* ---- a Scaled noise object
+
+	Example:
+
+	.. plot::
+		:include-source:
+
+		import numpy as np
+		import matplotlib.pyplot as plt
+		import power1d
+
+		J      = 8  # sample size
+		Q      = 101  # number of continuum nodes
+		x      = 5.1 + 5 * np.sin( np.linspace(0, 4*np.pi, Q) )
+		noise  = power1d.noise.SmoothGaussian( J, Q, fwhm=30 ) # baseline noise model
+		snoise = power1d.noise.from_array( noise, x ) # scaled noise object
+
+		fig,axs = plt.subplots(1, 3, figsize=(10,3), tight_layout=True)
+		noise.plot( ax=axs[0] )
+		axs[1].plot( x )
+		snoise.plot( ax=axs[2] )
+		labels  = 'Baseline noise model', 'Scaling array', 'Scaled noise'
+		[ax.set_title(s) for ax,s in zip(axs,labels)]
+		plt.show()
+	'''
+	assert isinstance(x, np.ndarray), 'x must be a numpy array.'
+	assert x.ndim == 1, 'x must be a one-dimensional array.\nAcutal dimensionality: %d' %value.ndim
+	assert x.size == noise.Q, f'x must have the same number of elements as the noise object. x has {x.size} elements and noise has {noise.Q} elements.'
+	assert np.all( x > 0 ), 'All values in x must be greater than zero.'
+	return Scaled(noise, x)
+
+
+def from_residuals( r, pad=False ):
+	'''
+	Convenience function for creating Scaled noise objects from sets of
+	experimental residuals.
+	
+	The mean of the residuals must be zero (i.e., the null continuum)
+	
+	WARNING! As shown in the example below, "from_residuals" may produce a
+	noise model that does NOT embody all features of the residuals. In
+	this case more complex noise modeling (e.g. Additive, Mixture) may
+	be required.
+	
+	Arguments:
+
+	*r* ---- a (J,Q) array of experimental residuals (J=observations, Q=domain nodes)
+
+	Outputs:
+	
+	*obj* ---- a Scaled noise object
+
+
+	Example:
+
+	.. plot::
+		:include-source:
+
+		import numpy as np
+		import matplotlib.pyplot as plt
+		import power1d
+
+		y      = power1d.data.weather()['Atlantic']
+		r      = y - y.mean( axis=0 ) # residuals
+		snoise = power1d.noise.from_residuals( r ) # scaled noise object
+
+		fig,axs = plt.subplots(1, 3, figsize=(10,3), tight_layout=True)
+		axs[0].plot( y.T )
+		axs[1].plot( r.T )
+		snoise.plot( ax=axs[2] )
+		labels  = 'Original data', 'Residuals', 'Scaled noise model'
+		[ax.set_title(s) for ax,s in zip(axs,labels)]
+		plt.show()
+	'''
+	assert isinstance(r, np.ndarray), 'r must be a numpy array.'
+	assert r.ndim == 2, 'r must be a two-dimensional array.\nAcutal dimensionality: %d' %r.ndim
+	_assert_spm1d()
+	# create scaled noise model:
+	import spm1d
+	J,Q   = r.shape
+	s     = r.std(axis=0, ddof=1)
+	fwhm  = spm1d.geom.estimate_fwhm( r )
+	noise = SmoothGaussian(J, Q, fwhm=fwhm, pad=pad)
+	return Scaled(noise, s)
 
 
 class _Noise(Sample1D):
@@ -59,7 +162,7 @@ class _Noise(Sample1D):
 		else:
 			self._random()
 	def set_sample_size(self, J):
-		super(_Noise, self).set_sample_size(J)
+		super().set_sample_size(J)
 		self.random()
 	iterate = get_iterator
 
@@ -97,7 +200,7 @@ class ConstantGaussian(_Noise):
 		noise.plot()
 	'''
 	def __init__(self, J=1, Q=101, mu=0, sigma=1):
-		super(ConstantGaussian, self).__init__(J, Q)
+		super().__init__(J, Q)
 		self._assert_scalar( dict(mu=mu, sigma=sigma) )
 		self._assert_greater( dict(sigma=sigma), 0 )
 		self.mu    = mu
@@ -139,7 +242,7 @@ class ConstantUniform(_Noise):
 		noise.plot()
 	'''
 	def __init__(self, J=1, Q=101, x0=0, x1=1):
-		super(ConstantUniform, self).__init__(J, Q)
+		super().__init__(J, Q)
 		self._assert_window( dict(x0=x0), dict(x1=x1), -np.inf, +np.inf, asint=False, le=False, ge=False )
 		self.x0    = x0
 		self.x1    = x1
@@ -181,7 +284,7 @@ class Gaussian(_Noise):
 		noise.plot()
 	'''
 	def __init__(self, J=1, Q=101, mu=0, sigma=1):
-		super(Gaussian, self).__init__(J, Q)
+		super().__init__(J, Q)
 		self._assert_scalar( dict(mu=mu, sigma=sigma) )
 		self._assert_greater( dict(sigma=sigma), 0 )
 		self.mu    = mu
@@ -235,7 +338,7 @@ class Skewed(_Noise):
 		noise.plot()
 	'''
 	def __init__(self, J=8, Q=101, mu=0, sigma=1, alpha=0):
-		super(Skewed, self).__init__(J, Q)
+		super().__init__(J, Q)
 		self._assert_scalar( dict(mu=mu, sigma=sigma, alpha=alpha) )
 		self._assert_greater( dict(sigma=sigma), 0 )
 		self.mu    = mu
@@ -287,7 +390,7 @@ class SmoothGaussian(_Noise):
 		noise.plot()
 	'''
 	def __init__(self, J=1, Q=101, mu=0, sigma=1, fwhm=20, pad=False):
-		super(SmoothGaussian, self).__init__(J, Q)
+		super().__init__(J, Q)
 		self._assert_scalar( dict(mu=mu, sigma=sigma, fwhm=fwhm) )
 		self._assert_greater( dict(sigma=sigma, fwhm=fwhm), 0 )
 		self._assert_bool( dict(pad=pad) )
@@ -301,7 +404,7 @@ class SmoothGaussian(_Noise):
 		self.value  = self.mu + self.sigma * self._gen.generate_sample()
 	def set_sample_size(self, J):
 		self._gen   = Generator1D(J, self.Q, self.fwhm, self.pad)
-		super(SmoothGaussian, self).set_sample_size(J)
+		super().set_sample_size(J)
 
 
 
@@ -346,7 +449,7 @@ class SmoothSkewed(_Noise):
 		noise.plot()
 	'''
 	def __init__(self, J=8, Q=101, mu=0, sigma=1, fwhm=20, pad=True, alpha=0):
-		super(SmoothSkewed, self).__init__(J, Q)
+		super().__init__(J, Q)
 		self._assert_scalar( dict(mu=mu, sigma=sigma, fwhm=fwhm, alpha=alpha) )
 		self._assert_bool( dict(pad=pad) )
 		self._assert_greater( dict(sigma=sigma), 0 )
@@ -381,7 +484,7 @@ class SmoothSkewed(_Noise):
 
 	def set_sample_size(self, J):
 		self._gen   = Generator1D(J, self.Q, self.fwhm, self.pad)
-		super(SmoothSkewed, self).set_sample_size(J)
+		super().set_sample_size(J)
 
 
 
@@ -412,7 +515,7 @@ class Uniform(_Noise):
 		noise.plot()
 	'''
 	def __init__(self, J=1, Q=101, x0=0, x1=1):
-		super(Uniform, self).__init__(J, Q)
+		super().__init__(J, Q)
 		self._assert_window( dict(x0=x0), dict(x1=x1), -np.inf, +np.inf, asint=False, le=False, ge=False )
 		self.x0    = x0
 		self.x1    = x1
@@ -455,7 +558,7 @@ class Additive(_Noise):
 		self._assert_instance_all( dict(noise_models=noise_models), [_Noise] )
 		self._assert_same_shape_all( dict(noise_models=noise_models), withJ=True )
 		self.models  = list( noise_models )
-		super(Additive, self).__init__(self.models[0].J, self.models[0].Q)
+		super().__init__(self.models[0].J, self.models[0].Q)
 		self._random()
 	def _random(self):
 		y          = np.zeros(  (self.J, self.Q)  )
@@ -495,7 +598,7 @@ class Mixture(_Noise):
 		self.models  = list( noise_models )
 		J            = sum([m.J  for m in self.models])
 		Q            = self.models[0].Q
-		super(Mixture, self).__init__(J, Q)
+		super().__init__(J, Q)
 		self._random()
 	def _random(self):
 		y          = []
@@ -541,7 +644,7 @@ class Scaled(_Noise):
 		self._assert_same_shape( dict(noise=noise), dict(scale=scale), withJ=False )
 		self.noise = noise
 		self.scale = scale
-		super(Scaled, self).__init__(noise.J, noise.Q)
+		super().__init__(noise.J, noise.Q)
 		self._random()
 	def _random(self):
 		self.noise.random()
@@ -594,7 +697,7 @@ class SignalDependent(_Noise):
 		self.noise  = noise
 		self.signal = signal
 		self.fn     = fn
-		super(SignalDependent, self).__init__(noise.J, noise.Q)
+		super().__init__(noise.J, noise.Q)
 		self._random()
 	def _random(self):
 		self.noise.random()

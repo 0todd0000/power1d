@@ -37,11 +37,11 @@ def weather():
 	
 	>>> weather = rft1d.data.weather()
 	>>> y = weather['Atlantic']  # (15 x 365) numpy array
-	>>> from matplotlib import pyplot
-	>>> pyplot.plot(y.T)
+	>>> import matplotlib.pyplot as plt
+	>>> plt.plot(y.T)
 	'''
-	dir0     = os.path.split(   os.path.dirname(__file__)   )[0]
-	fname    = os.path.join(dir0, 'data', 'weather', 'daily.mat')
+	dir0     = os.path.dirname( __file__ )
+	fname    = os.path.join(dir0, 'data', 'daily.mat')
 	M        = loadmat(fname)
 	Y        = M['tempav'].T
 	geogind  = M['geogindex'].flatten()
@@ -73,8 +73,8 @@ data = weather() #dictionay containing geographical locations
 
 
 #(1) Save as dictionary in an NPZ file:
-dir0     = os.path.split(   os.path.dirname(__file__)   )[0]
-fname    = os.path.join(dir0, 'data', 'weather', 'daily.npz')
+dir0     = os.path.dirname( __file__ )
+fname    = os.path.join(dir0, 'data', 'daily.npz')
 np.savez(fname, **data)
 
 

@@ -1,7 +1,7 @@
 
 import os
 import numpy as np
-from matplotlib import pyplot
+import matplotlib.pyplot as plt
 import power1d
 
 
@@ -28,23 +28,23 @@ model    = power1d.models.DataSample( baseline , signal , noise , J = J)
 
 
 #(2) Plot:
-pyplot.close('all')
-pyplot.figure(figsize=(8,3))
+plt.close('all')
+plt.figure(figsize=(8,3))
 ### create axes:
-ax0      = pyplot.axes([0.09,0.18,0.41,0.8])
-ax1      = pyplot.axes([0.57,0.18,0.41,0.8])
+ax0      = plt.axes([0.09,0.18,0.41,0.8])
+ax1      = plt.axes([0.57,0.18,0.41,0.8])
 AX       = [ax0,ax1]
 ### plot:
 model.plot( ax = ax0, lw=5 )
 model.random( )
 model.plot( ax = ax1, lw=5 )
-# pyplot.setp(AX, ylim=(-2.5, 9.5))
+# plt.setp(AX, ylim=(-2.5, 9.5))
 [ax.set_xlabel('Continuum position', size=12)  for ax in AX]
 ax0.set_ylabel('Continuum value', size=12)
 ax0.legend( [ax0.lines[0], ax0.lines[-1]], ['Noise', 'Mean'], loc='upper right' )
 labels   = '(a)', '(b)'
 [ax.text(0.03, 0.91, s, size=12, transform=ax.transAxes)   for ax,s in zip(AX,labels)]
-pyplot.show()
+plt.show()
 
 
 

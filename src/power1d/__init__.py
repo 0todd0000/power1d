@@ -9,11 +9,10 @@ https://peerj.com/articles/cs-125/
 
 
 Copyright (C) 2023  Todd Pataky
-Version: 0.1.5 (2023-02-07)
 '''
 
 
-__version__ = '0.1.6 (2023-02-07)'
+__version__ = '0.1.10 (2023-02-21)'
 
 
 __all__ = ['geom', 'models', 'noise', 'roi', 'stats']
@@ -22,6 +21,7 @@ __all__ = ['geom', 'models', 'noise', 'roi', 'stats']
 
 from . import data
 from . import geom
+from . import io
 from . import models
 from . import noise
 from . import prob

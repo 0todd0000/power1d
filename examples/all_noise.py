@@ -1,6 +1,6 @@
 
 import numpy as np
-from matplotlib import pyplot
+import matplotlib.pyplot as plt
 import power1d
 
 
@@ -48,8 +48,8 @@ noise.append(   power1d.noise.SignalDependent(noise0, signal, fn=fn)   )
 
 
 #(1) Plot:
-pyplot.close('all')
-pyplot.figure(figsize=(12,6))
+plt.close('all')
+plt.figure(figsize=(12,6))
 axx    = np.linspace(0.05, 0.82, 5)
 axy    = np.linspace(0.71, 0.09, 3)
 axw    = 0.17
@@ -64,17 +64,17 @@ for axyy in axy:
 		if ind not in IND:
 			continue
 		i   += 1
-		ax = pyplot.axes( [ axxx, axyy, axw, axh ] )
+		ax = plt.axes( [ axxx, axyy, axw, axh ] )
 		c  = noise[i]
 		c.plot(ax=ax, color='k', lw=0.5)
 		ax.text(0.05, 0.9, '%s' %c.__class__.__name__, size=13, transform=ax.transAxes, bbox=dict(facecolor='w', alpha=0.5))
 		AX.append(ax)
-pyplot.setp(AX, ylim=(-3,5))
+plt.setp(AX, ylim=(-3,5))
 for ax in AX[7:]:
 	ax.set_xlabel('Continuum position', size=12)
 for ax in [AX[0], AX[5], AX[7]]:
 	ax.set_ylabel('Continuum value', size=12)
-pyplot.show()
+plt.show()
 
 
 

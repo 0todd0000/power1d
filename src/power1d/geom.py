@@ -8,14 +8,79 @@ More complex 1D geometries can be constructed by combining multiple
 primitives through the standard operators: + - * / **
 '''
 
-# Copyright (C) 2017  Todd Pataky
-# version: 0.1 (2017/04/01)
+# Copyright (C) 2023  Todd Pataky
+
 
 from copy import deepcopy
 from math import sqrt,pi,log,floor
 import numpy as np
 from . _base import _Continuum1D
 
+
+
+
+def from_array(x):
+	'''
+	Create Continuum1D geometry object(s) from a 1D or 2D array.
+	
+	Arguments:
+
+	*x* ---- 1- or 2-dimensional numpy array
+	
+	Outputs:
+	
+	*obj* ---- a Continuum1D object
+
+
+	Example:
+
+	.. plot::
+		:include-source:
+
+		import numpy as np
+		import power1d
+
+		x     = np.random.rand( 101 )
+		obj   = power1d.geom.from_array( x ) # Continuum1D object
+		obj.plot()
+	
+		x     = np.random.rand( 5, 101 )
+		objs  = power1d.geom.from_array( x ) # list of Continuum1D objects
+		[obj.plot()  for obj in objs]
+	'''
+	assert isinstance(x, np.ndarray), 'x must be a numpy array.'
+	assert x.ndim in [1,2], 'x must be a one- or two-dimensional array.\nAcutal dimensionality: %d' %value.ndim
+	assert x.size > 1, 'x must have more than one element.'
+	if x.ndim ==2:
+		return [Continuum1D(xx) for xx in x]
+	else:
+		return Continuum1D(x)
+
+
+
+def from_file( fpath ):
+	'''
+	Create Continuum1D geometry object(s) from a CSV file.
+	
+	Only CSV files are currently supported.
+	
+	1D arrays can be saved as either a single row or a
+	single column in a CSV file.
+	
+	2D arrays must be saved with shape (nrow,ncol) where
+	nrow is the number of 1D arrays and each row will be
+	converted to a Continuum1D object
+	
+	Arguments:
+
+	*fpath* ---- full path to a CSV file
+	
+	Outputs:
+	
+	*obj* ---- a Continuum1D object
+	'''
+	from . io import file2geom
+	return file2geom( fpath )
 
 
 
@@ -103,10 +168,10 @@ def gaussian_kernel(sd):
 class Continuum1D(_Continuum1D):
 	'''
 	Manually defined one-dimensional continuum geometry.
-
+	
 	Arguments:
 
-	*value* ---- one-dimensional NumPy array
+	*value* ---- one-dimensional numpy array
 
 
 	Example:
@@ -123,7 +188,7 @@ class Continuum1D(_Continuum1D):
 	'''
 	def __init__(self, value):
 		self._assert_array1d( dict(value=value) )
-		super(Continuum1D, self).__init__(value.size)
+		super().__init__(value.size)
 		self.value = value
 
 
@@ -154,7 +219,7 @@ class Constant(_Continuum1D):
 	def __init__(self, Q=101, amp=0):
 		self._assert_scalar(  dict(amp=amp)  )
 		self.amp    = amp
-		super(Constant, self).__init__(Q)
+		super().__init__(Q)
 
 	def _build(self):
 		self.value      = self.amp * np.ones(self.Q)
@@ -195,7 +260,7 @@ class Exponential(_Continuum1D):
 		self.x0     = float(x0)
 		self.x1     = float(x1)
 		self.rate   = float(rate)
-		super(Exponential, self).__init__(Q)
+		super().__init__(Q)
 
 	def _build(self):
 		y               = np.exp( np.linspace(0, self.rate, self.Q) )
@@ -238,10 +303,10 @@ class ExponentialSaw(Exponential):
 		self._assert_integer(  dict(cutoff=cutoff)  )
 		self._assert_bounds(  dict(cutoff=cutoff), 0, Q  )
 		self.cutoff = cutoff
-		super(ExponentialSaw, self).__init__(Q, x0, x1, rate)
+		super().__init__(Q, x0, x1, rate)
 
 	def _build(self):
-		super(ExponentialSaw, self)._build()
+		super()._build()
 		self.value[self.cutoff:] = self.x0
 
 
@@ -278,7 +343,9 @@ class GaussianPulse(_Continuum1D):
 		obj.plot()
 	'''
 
-	def __init__(self, Q=101, q=50, fwhm=None, sigma=None, amp=5):
+	def __init__(self, Q=101, q=50, fwhm=None, sigma=None, amp=1):
+		if (sigma is None) and (fwhm is None):
+			sigma = 5
 		### field size parameters:
 		self._assert_Q(Q)
 		self._assert_integer(  dict(q=q)  )
@@ -295,7 +362,7 @@ class GaussianPulse(_Continuum1D):
 		self.fwhm  = None if fwhm is None else float(fwhm)
 		self.sigma = None if sigma is None else float(sigma)
 		self.amp   = float(amp)
-		super(GaussianPulse, self).__init__(Q)
+		super().__init__(Q)
 
 
 	def _build(self):
@@ -350,6 +417,8 @@ class Linear(_Continuum1D):
 		obj.plot()
 	'''
 	def __init__(self, Q=101, x0=0, x1=None, slope=None):
+		if (x1 is None) and (slope is None):
+			x1 = 1
 		self._assert_scalar(  dict(x0=x0)  )
 		self._assert_one_of_two_none( dict(x1=x1, slope=slope) )
 		if x1 is None:
@@ -359,7 +428,7 @@ class Linear(_Continuum1D):
 		self.x0         = x0
 		self.x1         = x1
 		self.slope      = slope
-		super(Linear, self).__init__(Q)
+		super().__init__(Q)
 
 	def _build(self):
 		x1              = self.x0 + self.slope*self.Q if self.x1 is None else self.x1
@@ -429,7 +498,7 @@ class SawPulse(_Continuum1D):
 		self.q1         = q1
 		self.x0         = x0
 		self.x1         = x1
-		super(SawPulse, self).__init__(Q)
+		super().__init__(Q)
 
 	def _build(self):
 		q0,q1           = self.q0, self.q1
@@ -479,7 +548,7 @@ class SawTooth(_Continuum1D):
 		self.x0         = x0
 		self.x1         = x1
 		self.dq         = dq
-		super(SawTooth, self).__init__(Q)
+		super().__init__(Q)
 
 	def _build(self):
 		q0,q1,dq        = self.q0, self.q1, self.dq
@@ -528,7 +597,7 @@ class Sigmoid(_Continuum1D):
 		self.q1         = q1
 		self.x0         = x0
 		self.x1         = x1
-		super(Sigmoid, self).__init__(Q)
+		super().__init__(Q)
 
 	def _build(self):
 		q0,q1      = self.q0, self.q1
@@ -580,7 +649,7 @@ class Sinusoid(_Continuum1D):
 		self.q0         = q0
 		self.amp        = amp
 		self.hz         = float(hz)
-		super(Sinusoid, self).__init__(Q)
+		super().__init__(Q)
 
 	def _build(self):
 		t0         = 2*pi* (1 - self.q0 * self.hz / self.Q)
@@ -629,7 +698,7 @@ class SquarePulse(_Continuum1D):
 		self.q1         = q1
 		self.x0         = x0
 		self.x1         = x1
-		super(SquarePulse, self).__init__(Q)
+		super().__init__(Q)
 
 	def _build(self):
 		q0,q1           = self.q0, self.q1
@@ -678,7 +747,7 @@ class SquareTooth(_Continuum1D):
 		self.x0         = x0
 		self.x1         = x1
 		self.dq         = dq
-		super(SquareTooth, self).__init__(Q)
+		super().__init__(Q)
 
 	def _build(self):
 		q0,q1           = self.q0, self.q1
@@ -727,7 +796,7 @@ class TrianglePulse(_Continuum1D):
 		self.q1         = q1
 		self.x0         = x0
 		self.x1         = x1
-		super(TrianglePulse, self).__init__(Q)
+		super().__init__(Q)
 
 	def _build(self):
 		q0,q1           = self.q0, self.q1
@@ -780,7 +849,7 @@ class TriangleTooth(_Continuum1D):
 		self.x0         = x0
 		self.x1         = x1
 		self.dq         = dq
-		super(TriangleTooth, self).__init__(Q)
+		super().__init__(Q)
 
 	def _build(self):
 		q0,q1           = self.q0, self.q1

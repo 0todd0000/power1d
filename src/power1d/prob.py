@@ -40,9 +40,8 @@ REFERENCES
 | https://sourceforge.net/projects/powermap/
 '''
 
+# Copyright (C) 2023  Todd Pataky
 
-# Copyright (C) 2017  Todd Pataky
-# version: 0.1 (2017/04/01)
 
 
 from math import pi,log,sqrt,exp

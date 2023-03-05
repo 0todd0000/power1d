@@ -1,7 +1,7 @@
 
 import os
 import numpy as np
-from matplotlib import pyplot
+import matplotlib.pyplot as plt
 import power1d
 
 
@@ -51,11 +51,11 @@ results.set_roi( roi )
 
 
 #(2) Plot:
-pyplot.close('all')
-pyplot.figure(figsize=(8,6))
+plt.close('all')
+plt.figure(figsize=(8,6))
 ### create axes:
 results.plot()
-pyplot.show()
+plt.show()
 
 
 

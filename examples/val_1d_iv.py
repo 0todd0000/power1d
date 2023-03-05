@@ -9,7 +9,7 @@ interface for numerical simulation.
 
 import os
 import numpy as np
-from matplotlib import pyplot
+import matplotlib.pyplot as plt
 import power1d
 
 
@@ -80,27 +80,27 @@ sigmas = np.arange(0.5, 2.01, 0.1)   #effect size (as variance under the alterna
 # 	PP1.append( P1 )
 # PP0,PP1 = np.array(PP0), np.array(PP1)
 # dir0    = os.path.dirname( __file__ )
-# fname   = os.path.join(dir0, 'val_1d_iv.npz')
+# fname   = os.path.join(dir0, 'data', 'val_1d_iv.npz')
 # np.savez(fname, PP0=PP0, PP1=PP1)
 
 
 
 dir0    = os.path.dirname( __file__ )
-fname   = os.path.join(dir0, 'val_1d_iv.npz')
+fname   = os.path.join(dir0, 'data', 'val_1d_iv.npz')
 with np.load(fname) as Z:
 	PP0 = Z['PP0']
 	PP1 = Z['PP1']
 
 #(2) Plot:
-pyplot.close('all')
+plt.close('all')
 ### create figure:
-pyplot.figure(figsize=(12,3))
+plt.figure(figsize=(12,3))
 ### create axes:
 axx    = np.linspace(0.05, 0.71, 3)
 axy    = 0.16
 axw    = 0.28
 axh    = 0.83
-AX     = [pyplot.axes([x,axy,axw,axh])  for x in axx]
+AX     = [plt.axes([x,axy,axw,axh])  for x in axx]
 ax0,ax1,ax2 = AX
 colors   = 'b', 'g', 'r'
 ls       = '-', '--', ':'
@@ -111,10 +111,10 @@ for ax,W,P0,P1 in zip(AX,WW0,PP0,PP1):
 		ax.set_xlabel(r'Effect size  ($\sigma$)', size=12)
 ax0.set_ylabel('Power', size=12)
 ax0.legend( loc=(0.01,0.5) )
-pyplot.setp(AX, ylim=(0, 0.75))
+plt.setp(AX, ylim=(0, 0.75))
 ### panel labels:
 [ax.text(0.05, 0.9, '(%s)  FWHM = %d'%(chr(97+i), W), transform=ax.transAxes, size=12)  for i,(ax,W) in enumerate( zip(AX,WW0) ) ]
-pyplot.show()
+plt.show()
 
 
 

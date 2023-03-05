@@ -15,15 +15,14 @@ to be modified. Simply substitute function and method content with appropriate
 commands from another library.
 '''
 
-# Copyright (C) 2017  Todd Pataky
-# version: 0.1 (2017/04/01)
+# Copyright (C) 2023  Todd Pataky
 
 
 
 
 import numpy as np
 import matplotlib
-from matplotlib import pyplot
+import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection
 
@@ -32,7 +31,7 @@ from matplotlib.collections import PatchCollection
 
 
 def _get_colors(n, cmap='jet'):
-	cmap   = pyplot.get_cmap(cmap)
+	cmap   = plt.get_cmap(cmap)
 	return cmap( np.linspace(0, 1, n) )
 
 
@@ -79,7 +78,7 @@ class DataPlotter(object):
 		
 	@staticmethod
 	def _gca(ax):
-		return pyplot.gca() if ax is None else ax
+		return plt.gca() if ax is None else ax
 	
 	def _set_axlim(self):
 		self._set_xlim()
@@ -90,7 +89,7 @@ class DataPlotter(object):
 		self.x   =  _get_q(Q, x)
 
 	def _set_xlim(self):
-		pyplot.setp(self.ax, xlim=(self.x.min(), self.x.max())  )
+		plt.setp(self.ax, xlim=(self.x.min(), self.x.max())  )
 
 	def _set_ylim(self, pad=0.075):
 		def minmax(x):
@@ -139,13 +138,13 @@ class DataPlotter(object):
 			y0,y1 = ylim
 			verts = [(x0,y0), (x1,y0), (x1,y1), (x0,y1)]
 			poly.append( Polygon(verts) )
-		pyplot.setp(poly, facecolor=facecolor, edgecolor=edgecolor, alpha=alpha)
+		plt.setp(poly, facecolor=facecolor, edgecolor=edgecolor, alpha=alpha)
 		self.ax.add_collection( PatchCollection(poly, match_original=True) )
 		self._set_xlim()
 		
 		
 	def set_ax_prop(self, *args, **kwdargs):
-		pyplot.setp(self.ax, *args, **kwdargs)
+		plt.setp(self.ax, *args, **kwdargs)
 
 
 
@@ -160,9 +159,9 @@ def _plot_results_one_datamodel(results, q=None):
 	axy   = [0.58, 0.08]
 	axw   = 0.41
 	axh   = 0.41
-	ax0   = pyplot.axes([axx[0], axy[0], axw, axh])
-	ax2   = pyplot.axes([axx[0], axy[1], axw, axh])
-	ax3   = pyplot.axes([axx[1], axy[1], axw, axh])
+	ax0   = plt.axes([axx[0], axy[0], axw, axh])
+	ax2   = plt.axes([axx[0], axy[1], axw, axh])
+	ax3   = plt.axes([axx[1], axy[1], axw, axh])
 	AX    = [ax0,ax2,ax3]
 	### plot experiment models:
 	c0,c1 = '0.5', 'k'
@@ -201,7 +200,7 @@ def _plot_results_one_datamodel(results, q=None):
 	labels.append(  'Null power continua'  )
 	labels.append(  'Alternative power continua'  )
 	tx      = [ax.text(0.05, 0.90,  label, transform=ax.transAxes)   for ax,label in zip([ax2,ax3],labels)]
-	pyplot.setp([ax2,ax3], xlim=q[[0,-1]], ylim=(-0.05, 1.2), yticks=np.linspace(0,1,6))
+	plt.setp([ax2,ax3], xlim=q[[0,-1]], ylim=(-0.05, 1.2), yticks=np.linspace(0,1,6))
 
 
 def _plot_results_multiple_datamodels(results, q=None):
@@ -211,10 +210,10 @@ def _plot_results_multiple_datamodels(results, q=None):
 	axy   = [0.58, 0.08]
 	axw   = 0.41
 	axh   = 0.41
-	ax0   = pyplot.axes([axx[0], axy[0], axw, axh])
-	ax1   = pyplot.axes([axx[1], axy[0], axw, axh])
-	ax2   = pyplot.axes([axx[0], axy[1], axw, axh])
-	ax3   = pyplot.axes([axx[1], axy[1], axw, axh])
+	ax0   = plt.axes([axx[0], axy[0], axw, axh])
+	ax1   = plt.axes([axx[1], axy[0], axw, axh])
+	ax2   = plt.axes([axx[0], axy[1], axw, axh])
+	ax3   = plt.axes([axx[1], axy[1], axw, axh])
 	AX    = [ax0,ax1,ax2,ax3]
 	### plot experiment models:
 	c0,c1 = '0.5', 'k'
@@ -255,7 +254,7 @@ def _plot_results_multiple_datamodels(results, q=None):
 	tx      = [ax.text(0.05, 0.90,  label, transform=ax.transAxes)   for ax,label in zip(AX,labels)]
 	labels2 = ['Omnibus P(reject) = %.3f' %p  for p in [results.p_reject0, results.p_reject1]]
 	tx2     = [ax.text(0.5, 0.05,  label, transform=ax.transAxes, ha='center')   for ax,label in zip(AX,labels2)]
-	pyplot.setp(tx2, bbox=dict(facecolor='w'))
-	pyplot.setp([ax2,ax3], xlim=q[[0,-1]], ylim=(-0.05, 1.2), yticks=np.linspace(0,1,6))
+	plt.setp(tx2, bbox=dict(facecolor='w'))
+	plt.setp([ax2,ax3], xlim=q[[0,-1]], ylim=(-0.05, 1.2), yticks=np.linspace(0,1,6))
 
 
