@@ -161,6 +161,14 @@ class _Noise(Sample1D):
 				self._set_other_value()
 		else:
 			self._random()
+	def set_attr(self, attr, value):
+		if attr == 'fwhm':
+			self._gen.set_fwhm( value )
+		else:
+			setattr(self, attr, value)
+		self.random()
+		
+		
 	def set_sample_size(self, J):
 		super().set_sample_size(J)
 		self.random()
