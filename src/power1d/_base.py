@@ -221,7 +221,7 @@ class _ContniuumObject(_Power1DObject):
 	
 	def plot(self, ax=None, q=None, *args, **kwdargs):
 		plotter = DataPlotter(ax)
-		plotter.plot( q, self.value, *args, **kwdargs )
+		return plotter.plot( q, self.value, *args, **kwdargs )
 	
 	def toarray(self):
 		return self.value.copy()
@@ -302,7 +302,7 @@ class _Continuum1D(_ContniuumObject):
 
 	def plot(self, ax=None, q=None, *args, **kwdargs):
 		plotter = DataPlotter(ax)
-		plotter.plot( q, self.value, *args, **kwdargs )
+		return plotter.plot( q, self.value, *args, **kwdargs )
 		
 		
 	def save(self, fpath):
@@ -359,7 +359,7 @@ class Sample1D(_ContniuumObject):
 	
 	def plot(self, ax=None, q=None, *args, **kwdargs):
 		plotter = DataPlotter(ax)
-		plotter.plot( q, self.value.T, *args, **kwdargs )
+		return plotter.plot( q, self.value.T, *args, **kwdargs )
 
 	def set_sample_size(self, J):
 		self._assert_J( J )
