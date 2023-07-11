@@ -254,14 +254,16 @@ class ConstantUniform(_Noise):
 		self._assert_window( dict(x0=x0), dict(x1=x1), -np.inf, +np.inf, asint=False, le=False, ge=False )
 		self.x0    = x0
 		self.x1    = x1
-		self.dx    = x1 - x0
+		# self.dx    = x1 - x0
 		self.ones  = np.ones((J,Q))
 		self._random()
 
 	def _random(self):
 		self.value = self.x0 + self.dx * (np.random.rand(self.J)*self.ones.T).T
 
-
+	@property
+	def dx(self):
+		return self.x1 - self.x0
 
 
 
@@ -527,12 +529,15 @@ class Uniform(_Noise):
 		self._assert_window( dict(x0=x0), dict(x1=x1), -np.inf, +np.inf, asint=False, le=False, ge=False )
 		self.x0    = x0
 		self.x1    = x1
-		self.dx    = x1 - x0
+		# self.dx    = x1 - x0
 		self._random()
 		
 	def _random(self):
 		self.value = self.x0 + self.dx * np.random.rand(self.J, self.Q)
 
+	@property
+	def dx(self):
+		return self.x1 - self.x0
 
 
 #-----------------------------
