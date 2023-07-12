@@ -545,7 +545,14 @@ class Uniform(_Noise):
 #-----------------------------
 
 
-class Additive(_Noise):
+class _MultiNoise(_Noise):
+	def set_sample_size(self, J):
+		for m in self.models:
+			m.set_sample_size(J)
+		super().set_sample_size(J)
+
+
+class Additive(_MultiNoise):
 	'''
 	Additive model (sum of two or more other noise types.)
 
@@ -582,7 +589,7 @@ class Additive(_Noise):
 
 
 
-class Mixture(_Noise):
+class Mixture(_MultiNoise):
 	'''
 	Noise mixture model (mixture of noise types in a fixed ratio)
 
@@ -622,7 +629,7 @@ class Mixture(_Noise):
 
 
 
-class Scaled(_Noise):
+class Scaled(_MultiNoise):
 	'''
 	Scaled noise model.
 
@@ -665,7 +672,7 @@ class Scaled(_Noise):
 
 
 
-class SignalDependent(_Noise):
+class SignalDependent(_MultiNoise):
 	'''
 	Signal-dependent noise model.
 
