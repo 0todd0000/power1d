@@ -12,7 +12,7 @@ Copyright (C) 2023  Todd Pataky
 '''
 
 
-__version__ = '0.1.10 (2023-07-13)'
+__version__ = '0.1.11 (2023-07-17)'
 
 
 __all__ = ['geom', 'models', 'noise', 'roi', 'stats']

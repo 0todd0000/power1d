@@ -711,7 +711,7 @@ class ExperimentSimulator(object):
 		return dict(nstar=nstar, n=np.array(ns), p=ps, target_power=power, alpha=alpha, coi=coi)
 	
 	
-	def simulate(self, iterations=50, progress_bar=True, two_tailed=False):
+	def simulate(self, iterations=50, progress_bar=True, two_tailed=False, _qprogressbar=None):
 		'''
 		Iteratively simulate a number of experiments.
 		
@@ -768,11 +768,15 @@ class ExperimentSimulator(object):
 		for i in range(iterations):
 			if progress_bar:
 				pbar.update(i)
+				if _qprogressbar is not None:
+					_qprogressbar.update(i)
 			Z0.append(  self.model0.simulate_single_iteration()  )
 			Z1.append(  self.model1.simulate_single_iteration()  )
 		### clean up:
 		if progress_bar:
 			pbar.destroy()
+			if _qprogressbar is not None:
+				_qprogressbar.reset()
 		for emodel in [self.model0, self.model1]:
 			for m in emodel.data_models:
 				m.random()   #set new random values (no baseline subtracting)
