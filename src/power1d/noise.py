@@ -629,7 +629,7 @@ class Mixture(_MultiNoise):
 
 
 
-class Scaled(_MultiNoise):
+class Scaled(_Noise):
 	'''
 	Scaled noise model.
 
@@ -669,10 +669,14 @@ class Scaled(_MultiNoise):
 	def _random(self):
 		self.noise.random()
 		self.value  = self.scale.value * self.noise.value
+	def set_sample_size(self, J):
+		self.noise.set_sample_size(J)
+		super().set_sample_size(J)
+		
 
 
 
-class SignalDependent(_MultiNoise):
+class SignalDependent(_Noise):
 	'''
 	Signal-dependent noise model.
 
@@ -722,6 +726,10 @@ class SignalDependent(_MultiNoise):
 	def _random(self):
 		self.noise.random()
 		self.value  = self.fn( self.noise.value, self.signal.value )
+	def set_sample_size(self, J):
+		self.noise.set_sample_size(J)
+		super().set_sample_size(J)
+		
 
 
 
