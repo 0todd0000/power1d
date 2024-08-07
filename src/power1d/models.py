@@ -320,7 +320,8 @@ class DataSample(_Noise):
 		*J* ---- sample size (positive int)
 		'''
 		super().set_sample_size(J)
-		assert (J >= 3) and (J<=100), 'Sample size (J) must be an integer in the range: (3, 100)'
+        # assert (J >= 3) and (J<=100), 'Sample size (J) must be an integer in the range: (3, 100)'
+		assert (J >= 3), 'Sample size (J) must be 3 or greater'
 		self.noise.set_sample_size(J)
 		
 

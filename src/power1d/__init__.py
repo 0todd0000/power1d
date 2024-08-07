@@ -8,11 +8,11 @@ DOI: 10.7717/peerj-cs.125
 https://peerj.com/articles/cs-125/
 
 
-Copyright (C) 2023  Todd Pataky
+Copyright (C) 2024  Todd Pataky
 '''
 
 
-__version__ = '0.1.13 (2023-07-17)'
+__version__ = '0.1.14 (2024-08-08)'
 
 
 __all__ = ['geom', 'models', 'noise', 'roi', 'stats']
