@@ -125,54 +125,54 @@ def from_residuals( r, pad=False ):
 
 
 class _Noise(Sample1D):
-	'''
-	Abstract noise class
-	'''
-	
-	islinked  = False     #whether or not another noise model is linked to this one
-	ismaster  = False     #if True, the "other" noise model adopts this noise value
-	other     = None      #linked noise model (if any)
-	
-	def _get_new_random_value(self):
-		self.random()
-		return self.value
-	def _random(self):        #abstract method (to be implemented by all child classes)
-		pass
-	def _set_other_value(self):
-		self.other.value    = self.value
-	def get_iterator(self, iterations=20):
-		for i in range(iterations):
-			yield self._get_new_random_value()
-	def copy(self):
-		return deepcopy(self)
-	def link(self, other):
-		assert isinstance(other, self.__class__), 'Linked and master noise classes must be the same'
-		assert self.J == other.J, 'Linked noise class must have same shape as the master noise.'
-		assert self.Q == other.Q, 'Linked noise class must have same shape as the master noise.'
-		self.islinked       = True
-		self.ismaster       = True
-		self.other          = other
-		self.other.islinked = True
-		self._set_other_value()
-	def random(self):        #abstract method
-		if self.islinked:
-			if self.ismaster:
-				self._random()
-				self._set_other_value()
-		else:
-			self._random()
-	def set_attr(self, attr, value):
-		if attr == 'fwhm':
-			self._gen.set_fwhm( value )
-		else:
-			setattr(self, attr, value)
-		self.random()
-		
-		
-	def set_sample_size(self, J):
-		super().set_sample_size(J)
-		self.random()
-	iterate = get_iterator
+    '''
+    Abstract noise class
+    '''
+
+    islinked  = False     #whether or not another noise model is linked to this one
+    ismaster  = False     #if True, the "other" noise model adopts this noise value
+    other     = None      #linked noise model (if any)
+
+    def _get_new_random_value(self):
+        self.random()
+        return self.value
+    def _random(self):        #abstract method (to be implemented by all child classes)
+        pass
+    def _set_other_value(self):
+        self.other.value    = self.value
+    def get_iterator(self, iterations=20):
+        for i in range(iterations):
+            yield self._get_new_random_value()
+    def copy(self):
+        return deepcopy(self)
+    def link(self, other):
+        assert isinstance(other, self.__class__), 'Linked and master noise classes must be the same'
+        assert self.J == other.J, 'Linked noise class must have same shape as the master noise.'
+        assert self.Q == other.Q, 'Linked noise class must have same shape as the master noise.'
+        self.islinked       = True
+        self.ismaster       = True
+        self.other          = other
+        self.other.islinked = True
+        self._set_other_value()
+    def random(self):        #abstract method
+        if self.islinked:
+            if self.ismaster:
+                self._random()
+                self._set_other_value()
+        else:
+            self._random()
+    def set_attr(self, attr, value):
+        if attr == 'fwhm':
+            self._gen.set_fwhm( value )
+        else:
+            setattr(self, attr, value)
+        self.random()
+
+
+    def set_sample_size(self, J):
+        super().set_sample_size(J)
+        self.random()
+    iterate = get_iterator
 
 
 
@@ -369,52 +369,55 @@ class Skewed(_Noise):
 
 
 class SmoothGaussian(_Noise):
-	'''
-	Smooth (correlated) Gaussian noise.
+    '''
+    Smooth (correlated) Gaussian noise.
 
 
-	Arguments:
+    Arguments:
 
-	*J* ---- sample size (int) (default 1)
+    *J* ---- sample size (int) (default 1)
 
-	*Q* ---- continuum size (int) (default 101)
+    *Q* ---- continuum size (int) (default 101)
 
-	*mu* ---- mean (float or int) (default 0)
+    *mu* ---- mean (float or int) (default 0)
 
-	*sigma* ---- standard deviation (float or int) (default 1)
+    *sigma* ---- standard deviation (float or int) (default 1)
 
-	*fwhm* ---- smoothness (float or int) (default 20); this is the full-width-at-half-maximum of a Gaussian kernel which is convolved with uncorrelated Gaussian noise;  the resulting smooth noise is re-scaled to unit variance
+    *fwhm* ---- smoothness (float or int) (default 20); this is the full-width-at-half-maximum of a Gaussian kernel which is convolved with uncorrelated Gaussian noise;  the resulting smooth noise is re-scaled to unit variance
 
-	*pad* ---- whether to pad continuum when smoothing (True or False) (default False);  unpadded noise has the same value at the beginning and end of the continuum
+    *pad* ---- whether to pad continuum when smoothing (True or False) (default False);  unpadded noise has the same value at the beginning and end of the continuum
 
 
 
-	Example:
+    Example:
 
-	.. plot::
-		:include-source:
+    .. plot::
+        :include-source:
 
-		import power1d
+        import power1d
 
-		noise   = power1d.noise.SmoothGaussian( J=8, Q=101, mu=0, sigma=1.0, fwhm=25, pad=False )
-		noise.plot()
-	'''
-	def __init__(self, J=1, Q=101, mu=0, sigma=1, fwhm=20, pad=False):
-		super().__init__(J, Q)
-		self._assert_scalar( dict(mu=mu, sigma=sigma, fwhm=fwhm) )
-		self._assert_greater( dict(sigma=sigma, fwhm=fwhm), 0 )
-		self._assert_bool( dict(pad=pad) )
-		self.mu     = mu
-		self.sigma  = sigma
-		self.fwhm   = fwhm
-		self.pad    = pad
-		self._gen   = Generator1D(J, Q, fwhm, pad)
-		self._random()
-	def _random(self):
-		self.value  = self.mu + self.sigma * self._gen.generate_sample()
-	def set_sample_size(self, J):
-		self._gen   = Generator1D(J, self.Q, self.fwhm, self.pad)
-		super().set_sample_size(J)
+        noise   = power1d.noise.SmoothGaussian( J=8, Q=101, mu=0, sigma=1.0, fwhm=25, pad=False )
+        noise.plot()
+    '''
+    def __init__(self, J=1, Q=101, mu=0, sigma=1, fwhm=20, pad=False):
+        super().__init__(J, Q)
+        self._assert_scalar( dict(mu=mu, sigma=sigma, fwhm=fwhm) )
+        self._assert_greater( dict(sigma=sigma, fwhm=fwhm), 0 )
+        self._assert_bool( dict(pad=pad) )
+        self.mu     = mu
+        self.sigma  = sigma
+        # self.fwhm   = fwhm
+        self.pad    = pad
+        self._gen   = Generator1D(J, Q, fwhm, pad)
+        self._random()
+    def _random(self):
+        self.value  = self.mu + self.sigma * self._gen.generate_sample()
+    @property
+    def fwhm(self):
+        return self._gen.FWHM
+    def set_sample_size(self, J):
+        self._gen   = Generator1D(J, self.Q, self.fwhm, self.pad)
+        super().set_sample_size(J)
 
 
 
@@ -422,79 +425,83 @@ class SmoothGaussian(_Noise):
 
 
 class SmoothSkewed(_Noise):
-	'''
-	Smooth, skewed noise.
-	
-	.. warning:: This smooth skewed distribution implementation is preliminary and will\
-	only accept skewness parameter "alpha" values in the range (1, 5). To skew in the\
-	opposite direction use (-5, -1).  Note that skewed distributions are approximate\
-	and may not be consistent with theoretical solutions.
+    '''
+    Smooth, skewed noise.
 
-	Arguments:
+    .. warning:: This smooth skewed distribution implementation is preliminary and will\
+    only accept skewness parameter "alpha" values in the range (1, 5). To skew in the\
+    opposite direction use (-5, -1).  Note that skewed distributions are approximate\
+    and may not be consistent with theoretical solutions.
 
-	*J* ---- sample size (int) (default 1)
+    Arguments:
 
-	*Q* ---- continuum size (int) (default 101)
+    *J* ---- sample size (int) (default 1)
 
-	*mu* ---- mean (float or int) (default 0)
+    *Q* ---- continuum size (int) (default 101)
 
-	*sigma* ---- standard deviation (float or int) (default 1)
+    *mu* ---- mean (float or int) (default 0)
 
-	*fwhm* ---- smoothness (float or int) (default 20); this is the full-width-at-half-maximum of a Gaussian kernel which is convolved with uncorrelated Gaussian noise;  the resulting smooth noise is re-scaled to unit variance
+    *sigma* ---- standard deviation (float or int) (default 1)
 
-	*pad* ---- whether to pad continuum when smoothing (True or False) (default False);  unpadded noise has the same value at the beginning and end of the continuum
+    *fwhm* ---- smoothness (float or int) (default 20); this is the full-width-at-half-maximum of a Gaussian kernel which is convolved with uncorrelated Gaussian noise;  the resulting smooth noise is re-scaled to unit variance
 
-	*alpha* ---- skewness (float or int between -5 and 5) (default 0)
+    *pad* ---- whether to pad continuum when smoothing (True or False) (default False);  unpadded noise has the same value at the beginning and end of the continuum
 
-
-
-	Example:
-
-	.. plot::
-		:include-source:
-
-		import power1d
-
-		noise   = power1d.noise.SmoothSkewed( J=8, Q=101, mu=0, sigma=1.0, fwhm=25, pad=False, alpha=-3 )
-		noise.plot()
-	'''
-	def __init__(self, J=8, Q=101, mu=0, sigma=1, fwhm=20, pad=True, alpha=0):
-		super().__init__(J, Q)
-		self._assert_scalar( dict(mu=mu, sigma=sigma, fwhm=fwhm, alpha=alpha) )
-		self._assert_bool( dict(pad=pad) )
-		self._assert_greater( dict(sigma=sigma), 0 )
-		if alpha>0:
-			self._assert_bounds( dict(alpha=alpha), 1, 5, ge=True, le=True )
-		else:
-			self._assert_bounds( dict(alpha=alpha), -5, -1, ge=True, le=True )
-		self.mu    = mu
-		self.sigma = sigma
-		self.fwhm  = fwhm
-		self.pad   = pad
-		self.alpha = alpha
-		self.skew0 = alpha / (1.0 + alpha**2)**0.5   #first skewness constant
-		self.skew1 = (1.0 - self.skew0**2)**0.5      #second skewness constant
-		self._gen  = Generator1D(J, Q, fwhm, pad)
-		self._random()
-		
-
-	def _get_random_skewed_vector(self):
-		u0    = np.random.randn(self.J)
-		v     = np.random.randn(self.J)
-		u1    = (self.skew0*u0 + self.skew1*v) * self.sigma
-		u1[u0 < 0] *= -1
-		return self.mu + u1
+    *alpha* ---- skewness (float or int between -5 and 5) (default 0)
 
 
-	def _random(self):
-		y     = self.mu + self.sigma * self._gen.generate_sample()
-		x     = self._get_random_skewed_vector()
-		m     = y.mean(axis=1)
-		self.value = ((y.T + self.alpha*x ).T) / self.alpha
 
-	def set_sample_size(self, J):
-		self._gen   = Generator1D(J, self.Q, self.fwhm, self.pad)
-		super().set_sample_size(J)
+    Example:
+
+    .. plot::
+        :include-source:
+
+        import power1d
+
+        noise   = power1d.noise.SmoothSkewed( J=8, Q=101, mu=0, sigma=1.0, fwhm=25, pad=False, alpha=-3 )
+        noise.plot()
+    '''
+    def __init__(self, J=8, Q=101, mu=0, sigma=1, fwhm=20, pad=True, alpha=0):
+        super().__init__(J, Q)
+        self._assert_scalar( dict(mu=mu, sigma=sigma, fwhm=fwhm, alpha=alpha) )
+        self._assert_bool( dict(pad=pad) )
+        self._assert_greater( dict(sigma=sigma), 0 )
+        if alpha>0:
+            self._assert_bounds( dict(alpha=alpha), 1, 5, ge=True, le=True )
+        else:
+            self._assert_bounds( dict(alpha=alpha), -5, -1, ge=True, le=True )
+        self.mu    = mu
+        self.sigma = sigma
+        # self.fwhm  = fwhm
+        self.pad   = pad
+        self.alpha = alpha
+        self.skew0 = alpha / (1.0 + alpha**2)**0.5   #first skewness constant
+        self.skew1 = (1.0 - self.skew0**2)**0.5      #second skewness constant
+        self._gen  = Generator1D(J, Q, fwhm, pad)
+        self._random()
+
+
+    def _get_random_skewed_vector(self):
+        u0    = np.random.randn(self.J)
+        v     = np.random.randn(self.J)
+        u1    = (self.skew0*u0 + self.skew1*v) * self.sigma
+        u1[u0 < 0] *= -1
+        return self.mu + u1
+
+
+    def _random(self):
+        y     = self.mu + self.sigma * self._gen.generate_sample()
+        x     = self._get_random_skewed_vector()
+        m     = y.mean(axis=1)
+        self.value = ((y.T + self.alpha*x ).T) / self.alpha
+
+    @property
+    def fwhm(self):
+        return self._gen.FWHM
+
+    def set_sample_size(self, J):
+        self._gen   = Generator1D(J, self.Q, self.fwhm, self.pad)
+        super().set_sample_size(J)
 
 
 
